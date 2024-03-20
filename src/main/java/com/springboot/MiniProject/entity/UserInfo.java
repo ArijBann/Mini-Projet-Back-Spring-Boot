@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -31,5 +32,8 @@ public class UserInfo {
     private String diplome ;
     //etud info
     private double num_inscri;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "groupe_id")
+    private Groupe groupe;
     private String roles;
 }
