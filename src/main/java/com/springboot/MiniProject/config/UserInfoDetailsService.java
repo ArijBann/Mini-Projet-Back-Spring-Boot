@@ -1,0 +1,33 @@
+package com.springboot.MiniProject.config;
+
+import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+
+@Component
+public class UserInfoDetailsService implements UserDetailsService {
+    @Autowired
+    private UserRepository repository;
+    @Override
+    /***************************************************************/
+    /*public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<UserInfo> userInfo = repository.findByNom(username);
+        return userInfo.map(UserInfoDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("user not found " + username));
+
+    }
+    **********************************************/
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> userInfo = repository.findByNom(username);
+        return userInfo.map(UserInfoDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("user not found " + username));
+
+    }
+
+}
