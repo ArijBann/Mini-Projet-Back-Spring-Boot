@@ -1,12 +1,17 @@
 package com.springboot.MiniProject.config;
+import com.springboot.MiniProject.filter.JwtAuthFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +21,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -24,6 +30,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 
 public class SecurityConfig {
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
     @Bean
     //authentication
     public UserDetailsService userDetailsService() {
@@ -38,19 +46,23 @@ public class SecurityConfig {
 //        return new InMemoryUserDetailsManager(admin, user);
         return new UserInfoDetailsService();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.
-                 csrf(AbstractHttpConfigurer::disable)
+                csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/products/welcome","/products/new","/products/user/enseignant","/products/user/etudiant","/products/user/admin").permitAll()
-                                .requestMatchers("/products/**").authenticated()
+                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant", "/issatso/user/admin", "/issatso/authentificat").permitAll()
+                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
                 )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults())
                 .formLogin(login -> login
-                        .defaultSuccessUrl("/products/welcome", true) // Setting default success URL
+                        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
                 ).build();
     }
 
@@ -60,10 +72,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
+    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
