@@ -68,9 +68,9 @@ public class UserController {
 
     @PostMapping("/authentificat")
     public String authentificateAndGetToken(@RequestBody AuthRequest authRequest){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getNom(), authRequest.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()){
-            return jwtService.generateToken(authRequest.getNom());
+            return jwtService.generateToken(authRequest.getEmail());
         }else{
             throw new UsernameNotFoundException("invalid user request !");
         }
