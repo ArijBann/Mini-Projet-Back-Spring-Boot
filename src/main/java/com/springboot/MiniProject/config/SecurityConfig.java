@@ -44,13 +44,13 @@ public class SecurityConfig {
                  csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/products/welcome","/products/new","/products/user/enseignant","/products/user/etudiant","/products/user/admin").permitAll()
-                                .requestMatchers("/products/**").authenticated()
+                                .requestMatchers("/issatso/welcome","/issatso/new","/issatso/user/enseignant","/issatso/user/etudiant","/issatso/user/admin").permitAll()
+                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults())
                 .formLogin(login -> login
-                        .defaultSuccessUrl("/products/welcome", true) // Setting default success URL
+                        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
                 ).build();
     }
 

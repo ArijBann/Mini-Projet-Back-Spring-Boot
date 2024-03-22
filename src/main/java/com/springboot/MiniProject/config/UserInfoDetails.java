@@ -24,14 +24,14 @@ public class UserInfoDetails implements UserDetails {
                 .collect(Collectors.toList());
     }*/
 
-/*********************************************************************************************/
+    /*********************************************************************************************/
 
-public UserInfoDetails(User userInfo) {
-    name=userInfo.getNom();
-    password=userInfo.getPassword();
-    authorities= Arrays.stream(userInfo.getRoles().split(","))
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());}
+    public UserInfoDetails(User userInfo) {
+        name=userInfo.getNom();
+        password=userInfo.getPassword();
+        authorities= Arrays.stream(userInfo.getRoles().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());}
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
