@@ -54,7 +54,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         (authorize) -> authorize
                                 .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant", "/issatso/user/admin", "/issatso/authentificat").permitAll()
-                                .requestMatchers("/issatso/**").authenticated()
+                                .requestMatchers("/issatso/welcome","/issatso/new","/issatso/user/enseignant","/issatso/user/etudiant","/issatso/user/admin").permitAll()
+                               .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
