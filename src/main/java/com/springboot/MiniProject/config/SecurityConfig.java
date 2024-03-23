@@ -61,10 +61,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults())
-                .formLogin(login -> login
-                        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
-                ).build();
+                //.httpBasic(withDefaults())
+                //.formLogin(login -> login
+                //        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
+                //)
+                .build();
     }
 
     @Bean
