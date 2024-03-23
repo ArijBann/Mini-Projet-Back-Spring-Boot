@@ -27,15 +27,15 @@ public class User {
     private double numtel;
     private String roles;
     //etudiant
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "fk_etud_id")
     private Etudiant etudiant;
     //enseignant
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "fk_ens_id")
     private Enseignant enseignant;
     //admin
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "fk_admin_id")
     private Admin admin;
 }

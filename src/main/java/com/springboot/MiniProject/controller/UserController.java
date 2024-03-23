@@ -8,6 +8,7 @@ import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.JwtService;
 import com.springboot.MiniProject.serivce.UserService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,7 +66,10 @@ public class UserController {
         return "Welcome ens";
     }
 
-
+    @DeleteMapping("/delete/Enseignant/{id}")
+    public String deleteEns(@PathVariable int id){
+        return service.deleteEns(id);
+    }
     @PostMapping("/authentificat")
     public String authentificateAndGetToken(@RequestBody AuthRequest authRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
