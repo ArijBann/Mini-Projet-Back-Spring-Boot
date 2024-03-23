@@ -110,11 +110,23 @@ public class UserService {
     }
 
     public String deleteEns (int id){
-        Enseignant exeistEnsegnant = enseignantRepository.findById(id).orElse(null);
-        int enseignantId = exeistEnsegnant.getId();
-        userRepository.deleteById(id);
-        enseignantRepository.deleteById(enseignantId);
-
+        Optional<User> myUserEns = userRepository.findUserByEnseignantId((id));
+         userRepository.deleteById(myUserEns.get().getId());
+         enseignantRepository.deleteById(id);
         return "Enseignant Deleted Successfully !";
+    }
+
+    public String deleteEtud (int id){
+        Optional<User> myUserEns = userRepository.findUserByEtudiantId((id));
+        userRepository.deleteById(myUserEns.get().getId());
+        etudiantRepository.deleteById(id);
+        return "Etudiant Deleted Successfully !";
+    }
+
+    public String deleteAdmin (int id){
+        Optional<User> myUserEns = userRepository.findUserByAdminId((id));
+        userRepository.deleteById(myUserEns.get().getId());
+        adminRepository.deleteById(id);
+        return "Admin Deleted Successfully !";
     }
 }

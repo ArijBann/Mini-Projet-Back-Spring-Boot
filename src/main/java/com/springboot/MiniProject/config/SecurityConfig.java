@@ -53,7 +53,9 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant", "/issatso/user/admin", "/issatso/authentificat","/issatso/delete/enseignant/**").permitAll()
+                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant",
+                                        "/issatso/user/admin", "/issatso/authentificat","/issatso/delete/**"
+                                        ).permitAll()
                                // .requestMatchers("/issatso/welcome","/issatso/new","/issatso/user/enseignant","/issatso/user/etudiant","/issatso/user/admin").permitAll()
                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()

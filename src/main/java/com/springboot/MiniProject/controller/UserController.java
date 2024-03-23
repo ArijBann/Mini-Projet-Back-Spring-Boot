@@ -66,10 +66,19 @@ public class UserController {
         return "Welcome ens";
     }
 
-    @DeleteMapping("/delete/Enseignant/{id}")
-    public String deleteEns(@PathVariable int id){
+    @DeleteMapping("/delete/enseignant/{id}")
+    public String deleteEnsegnant(@PathVariable int id){
         return service.deleteEns(id);
     }
+    @DeleteMapping("/delete/etudiant/{id}")
+    public String deleteEtudiant(@PathVariable int id){
+        return service.deleteEtud(id);
+    }
+    @DeleteMapping("/delete/admin/{id}")
+    public String deleteAdmin(@PathVariable int id){
+        return service.deleteAdmin(id);
+    }
+
     @PostMapping("/authentificat")
     public String authentificateAndGetToken(@RequestBody AuthRequest authRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
