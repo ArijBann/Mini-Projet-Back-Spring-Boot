@@ -4,10 +4,12 @@ import com.springboot.MiniProject.dto.AuthRequest;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
+import com.springboot.MiniProject.dto.JwtResponse;
 import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.JwtService;
 import com.springboot.MiniProject.serivce.UserService;
+import com.springboot.MiniProject.serivce.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +25,8 @@ public class UserController {
     private UserService service;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private RefreshTokenService refreshTokenService;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -67,10 +71,13 @@ public class UserController {
 
 
     @PostMapping("/authentificat")
-    public String authentificateAndGetToken(@RequestBody AuthRequest authRequest){
+    public JwtResponse authentificateAndGetToken(@RequestBody AuthRequest authRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()){
-            return jwtService.generateToken(authRequest.getEmail());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
+            return JwtResponse.builder()
+                    .accessToken(jwtService.generateToken(authRequest.getEmail()))
+                    .token(refreshToken.getToken()).build();
         }else{
             throw new UsernameNotFoundException("invalid user request !");
         }
