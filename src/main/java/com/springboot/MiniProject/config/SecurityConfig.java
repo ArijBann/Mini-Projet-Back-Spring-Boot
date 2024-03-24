@@ -53,7 +53,7 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant", "/issatso/user/admin", "/issatso/authentificat").permitAll()
+                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant", "/issatso/user/admin", "/issatso/authentificat","/issatso/refreshToken").permitAll()
                                 .requestMatchers("/issatso/welcome","/issatso/new","/issatso/user/enseignant","/issatso/user/etudiant","/issatso/user/admin").permitAll()
                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()

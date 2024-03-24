@@ -1,10 +1,7 @@
 package com.springboot.MiniProject.controller;
 
-import com.springboot.MiniProject.dto.AuthRequest;
-import com.springboot.MiniProject.dto.UserAdminDTO;
-import com.springboot.MiniProject.dto.UserEnseigantDTO;
-import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.dto.JwtResponse;
+import com.springboot.MiniProject.dto.*;
+import com.springboot.MiniProject.entity.RefreshToken;
 import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.JwtService;
@@ -83,4 +80,20 @@ public class UserController {
         }
 
     }
+
+    @PostMapping("/refreshToken")
+    public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.findByToken(refreshTokenRequest.getToken())
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String accessToken = jwtService.generateToken(user.getEmail());
+                    return JwtResponse.builder()
+                            .accessToken(accessToken)
+                            .token(refreshTokenRequest.getToken())
+                            .build();
+                }).orElseThrow(() -> new RuntimeException(
+                        "Refresh token is not in database!"));
+    }
+
 }
