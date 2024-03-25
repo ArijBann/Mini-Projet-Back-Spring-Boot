@@ -23,10 +23,10 @@ public class Enseignant {
     private int numProf;
     private String diplome ;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
     @JoinTable( name = "ens_groupes",
-            joinColumns = @JoinColumn(name = "ens_id",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "groupe_id", referencedColumnName = "id"))
-    private List<Groupe> groupes = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "ens_id"),
+            inverseJoinColumns = @JoinColumn(name = "groupe_id"))
+    private List<Groupe> groupes ;
 }
 

@@ -5,9 +5,13 @@ import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
 import com.springboot.MiniProject.entity.Enseignant;
+import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.serivce.EnseignantService;
+import com.springboot.MiniProject.serivce.EtudiantService;
 import com.springboot.MiniProject.serivce.JwtService;
 import com.springboot.MiniProject.serivce.UserService;
+import jakarta.persistence.PostUpdate;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,28 +27,17 @@ public class UserController {
     @Autowired
     private UserService service;
     @Autowired
+    private EnseignantService enseignantService;
+    @Autowired
     private JwtService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    @Autowired
+    private EtudiantService etudiantService;
     //cette PAGE est accessible par tout le monde
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome this endpoint is not secure";
-    }
-
-    @PostMapping("/user/enseignant")
-    public String addNewEns(@RequestBody UserEnseigantDTO userEnseigantDTO){
-        return service.addEns(userEnseigantDTO);
-    }
-
-    @PostMapping("/user/etudiant")
-    public String addNewEns(@RequestBody UserEtudiantDTO userEtudiantDTO){
-        return service.addEtud(userEtudiantDTO);
-    }
-    @PostMapping("/user/admin")
-    public String addNewEns(@RequestBody UserAdminDTO userAdminDTO){
-        return service.addAdmin(userAdminDTO);
     }
     //cette PAGE est accessible par les etudiants seulement
     @GetMapping("/welcome/etud")
@@ -53,12 +46,6 @@ public class UserController {
         return "Welcome etud";
     }
 
-    //cette PAGE est accessible par les admins seulement
-    @GetMapping("/welcome/admin")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public String welcomeAdmin() {
-        return "Welcome ens";
-    }
     //cette PAGE est accessible par les enseignants seulement
     @GetMapping("/welcome/ens")
     @PreAuthorize("hasAuthority('ROLE_ENS')")
@@ -66,18 +53,6 @@ public class UserController {
         return "Welcome ens";
     }
 
-    @DeleteMapping("/delete/enseignant/{id}")
-    public String deleteEnsegnant(@PathVariable int id){
-        return service.deleteEns(id);
-    }
-    @DeleteMapping("/delete/etudiant/{id}")
-    public String deleteEtudiant(@PathVariable int id){
-        return service.deleteEtud(id);
-    }
-    @DeleteMapping("/delete/admin/{id}")
-    public String deleteAdmin(@PathVariable int id){
-        return service.deleteAdmin(id);
-    }
 
     @PostMapping("/authentificat")
     public String authentificateAndGetToken(@RequestBody AuthRequest authRequest){

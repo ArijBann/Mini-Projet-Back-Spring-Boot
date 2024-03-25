@@ -21,7 +21,9 @@ public class Groupe {
     private String niveau;
     private String filière;
     private int numeroGroupe ;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "groupe", cascade = CascadeType.MERGE)
-    private List<Etudiant> etudiantList;
+    @ManyToMany(mappedBy = "groupes")
+    private List <Enseignant> enseignants ;
+   /* @OneToMany(fetch = FetchType.LAZY, mappedBy = "groupe", cascade = CascadeType.MERGE)
+    private List<Etudiant> etudiantList;*/
 
 }
