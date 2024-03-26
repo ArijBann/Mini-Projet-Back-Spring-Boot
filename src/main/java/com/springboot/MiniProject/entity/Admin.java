@@ -16,6 +16,5 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int num_bureau;
-    @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
-    private User user;
+
 }

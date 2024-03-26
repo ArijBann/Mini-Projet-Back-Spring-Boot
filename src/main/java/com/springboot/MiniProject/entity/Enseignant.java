@@ -22,12 +22,11 @@ public class Enseignant {
     private int id;
     private int numProf;
     private String diplome ;
-    @OneToOne(mappedBy = "enseignant", cascade = CascadeType.ALL)
-    private User user;
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
     @JoinTable( name = "ens_groupes",
-            joinColumns = @JoinColumn(name = "ens_id",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "groupe_id", referencedColumnName = "id"))
-    private List<Groupe> roles = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "ens_id"),
+            inverseJoinColumns = @JoinColumn(name = "groupe_id"))
+    private List<Groupe> groupes ;
 }
 

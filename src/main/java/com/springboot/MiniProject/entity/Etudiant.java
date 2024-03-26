@@ -19,8 +19,7 @@ public class Etudiant {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "groupe_id")
     private Groupe groupe;
-    @OneToOne(mappedBy = "etudiant", cascade = CascadeType.ALL)
-    private User user;
+
 
 
 }

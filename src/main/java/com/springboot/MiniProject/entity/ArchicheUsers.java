@@ -1,6 +1,5 @@
 package com.springboot.MiniProject.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -12,12 +11,13 @@ import java.util.Date;
 @Setter
 @Data
 @Entity
-@Table(name = "Myuser")
-public class User {
+@Table(name = "archiveUsers")
+public class ArchicheUsers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    //global info
+    private Date date_suppression;
+    private String description ;
     private String nom;
     private String prenom;
     private String email;
