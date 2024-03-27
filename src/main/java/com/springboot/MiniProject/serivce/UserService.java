@@ -187,4 +187,5 @@ private GroupeService groupeService;
         Optional<Groupe> groupeExist = groupeService.getGroupeById(idGroupe);
         return etudiantRepository.findEtudiantByGroupe(groupeExist);
     }
+
 }
