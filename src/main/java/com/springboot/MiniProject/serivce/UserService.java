@@ -4,10 +4,7 @@ package com.springboot.MiniProject.serivce;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.Admin;
-import com.springboot.MiniProject.entity.Enseignant;
-import com.springboot.MiniProject.entity.Etudiant;
-import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +35,8 @@ public class UserService {
     private AdminRepository adminRepository;
     @Autowired
     private EmailSenderService emailSenderService;
-
+@Autowired
+private GroupeService groupeService;
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();
@@ -163,7 +161,6 @@ public class UserService {
         }
     }
 
-
     public UserEnseigantDTO getEnseignantByNumProf(int numProf) {
         Optional<Enseignant> user = enseignantRepository.findByNumProf(numProf);
         if (user != null) {
@@ -172,5 +169,22 @@ public class UserService {
             return null;
         }
     }
-
+    public List<UserEtudiantDTO> getAllEtudiants() {
+        List<Etudiant> etudiants = etudiantRepository.findAll();
+        return etudiants.stream()
+                .map(etudiant -> new UserEtudiantDTO(userRepository.findUserByEtudiantId(etudiant.getId()).orElse(null), etudiant))
+                .collect(Collectors.toList());
+    }
+        public UserEtudiantDTO getEtudiantByNumInscri(double numInscri) {
+        Etudiant user = etudiantRepository.findEtudiantByNumInscri(numInscri);
+        if (user != null) {
+            return new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.getId()).orElse(null), user);
+        } else {
+            return null;
+        }
+    }
+    public List<Etudiant> getEtudiantByGroupe(int idGroupe) {
+        Optional<Groupe> groupeExist = groupeService.getGroupeById(idGroupe);
+        return etudiantRepository.findEtudiantByGroupe(groupeExist);
+    }
 }
