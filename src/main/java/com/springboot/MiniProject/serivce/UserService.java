@@ -147,21 +147,20 @@ public class UserService {
         }
     }
 
-    public String deleteEns (int id,String description){
-        Optional<User> myUserEns = userRepository.findUserByEnseignantId((id));
-        String msg = addUserToArchive(myUserEns,description);
-        userRepository.deleteById(myUserEns.get().getId());
-        //enseignantRepository.deleteById(id);
+    public String deleteEns (int numProf,String description){
+        Optional<Enseignant> user = enseignantRepository.findByNumProf(numProf);
+        UserEnseigantDTO userEnseigantDTO =new UserEnseigantDTO(userRepository.findUserByEnseignantId(user.get().getId()).orElse(null), user.get());
+        String msg = addUserToArchive(Optional.ofNullable(userEnseigantDTO.getUser()),description);
+        userRepository.deleteById(userEnseigantDTO.getUser().getId());
+        //enseignantRepository.deleteById(userEnseigantDTO.getEnseignant().getId());
         return "Enseignant Deleted Successfully from users !";
     }
-
-
-    public String deleteEtud (int id,String description){
-        Optional<User> myUserEns = userRepository.findUserByEtudiantId((id));
-        String msg = addUserToArchive(myUserEns,description);
-        userRepository.deleteById(myUserEns.get().getId());
-        //etudiantRepository.deleteById(id);
-        return "Etudiant Deleted Successfully !";
+    public String deleteEtud (int numInscrit, String description){
+        Optional<Etudiant> user = etudiantRepository.findEtudiantByNum_inscri(numInscrit);
+        UserEtudiantDTO userEtudiantDTO =new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.get().getId()).orElse(null), user.get());
+        String msg = addUserToArchive(Optional.ofNullable(userEtudiantDTO.getUser()),description);
+        userRepository.deleteById(userEtudiantDTO.getUser().getId());
+        return "Etudiant Deleted Successfully from users !";
     }
 
     public String deleteAdmin (int id,String description){
@@ -171,6 +170,7 @@ public class UserService {
         //adminRepository.deleteById(id);
         return "Admin Deleted Successfully !";
     }
+
     public User updateUser(User user){
         User existingEUser = userRepository.findById(user.getId()).orElse(null);
         existingEUser.setPassword(user.getPassword());
