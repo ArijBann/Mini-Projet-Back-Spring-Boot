@@ -4,6 +4,7 @@ package com.springboot.MiniProject.controller;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
+import com.springboot.MiniProject.entity.ArchiveUsers;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.EtudiantService;
@@ -53,17 +54,17 @@ public class AdminController {
         return service.addAdmin(userAdminDTO);
     }
 
-    @DeleteMapping("/delete/enseignant/{id}")
-    public String deleteEnsegnant(@PathVariable int id){
-        return service.deleteEns(id);
+    @DeleteMapping("/delete/enseignant/{id}/{desc}")
+    public String deleteEnsegnant(@PathVariable int id,@PathVariable String desc){
+        return service.deleteEns(id,desc);
     }
-    @DeleteMapping("/delete/etudiant/{id}")
-    public String deleteEtudiant(@PathVariable int id){
-        return service.deleteEtud(id);
+    @DeleteMapping("/delete/etudiant/{id}/{desc}")
+    public String deleteEtudiant(@PathVariable int id,@PathVariable String desc){
+        return service.deleteEtud(id,desc);
     }
-    @DeleteMapping("/delete/admin/{id}")
-    public String deleteAdmin(@PathVariable int id){
-        return service.deleteAdmin(id);
+    @DeleteMapping("/delete/admin/{id}/{desc}")
+    public String deleteAdmin(@PathVariable int id,@PathVariable String desc){
+        return service.deleteAdmin(id,desc);
     }
    // @PutMapping("/update/enseignant")
     //public Enseignant updateEnseignant(@RequestBody Enseignant Enseigant){return enseignantService.updateEnseignant(Enseigant);}
@@ -100,4 +101,10 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/allArchiveUsers")
+    public List<ArchiveUsers> getAllArchiveUsers() {
+        return service.getAllArchiveUsers();
+    }
+
+
 }

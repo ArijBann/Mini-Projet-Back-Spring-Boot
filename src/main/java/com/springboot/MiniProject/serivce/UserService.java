@@ -4,21 +4,15 @@ package com.springboot.MiniProject.serivce;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.Admin;
-import com.springboot.MiniProject.entity.Enseignant;
-import com.springboot.MiniProject.entity.Etudiant;
-import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -38,6 +32,8 @@ public class UserService {
     private AdminRepository adminRepository;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Autowired
+    private ArchiveUsersRepository archiveUsersRepository ;
 
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
@@ -114,24 +110,65 @@ public class UserService {
 
     }
 
-    public String deleteEns (int id){
+   /* public String deleteEns (int id){
         Optional<User> myUserEns = userRepository.findUserByEnseignantId((id));
          userRepository.deleteById(myUserEns.get().getId());
          enseignantRepository.deleteById(id);
         return "Enseignant Deleted Successfully !";
+    }*/
+
+
+    public String addUserToArchive(Optional<User> user , String description){
+        if (user.isPresent()) {
+            ArchiveUsers archiveUsers = new ArchiveUsers();
+            boolean userExists = archiveUsersRepository
+                    .findByEmail(user.get().getEmail())
+                    .isPresent();
+            if (userExists) {
+                throw new IllegalStateException("email already taken");
+            } else {
+                archiveUsers.setNom(user.get().getNom());
+                archiveUsers.setPrenom(user.get().getPrenom());
+                archiveUsers.setEmail(user.get().getEmail());
+                archiveUsers.setPassword(user.get().getPassword());
+                archiveUsers.setCIN(user.get().getCIN());
+                archiveUsers.setDate_nais(user.get().getDate_nais());
+                archiveUsers.setNumtel(user.get().getNumtel());
+                archiveUsers.setEtudiant(user.get().getEtudiant());
+                archiveUsers.setEnseignant(user.get().getEnseignant());
+                archiveUsers.setAdmin(user.get().getAdmin());
+                archiveUsers.setDate_suppression(LocalDateTime.now());
+                archiveUsers.setDescription(description);
+                archiveUsersRepository.save(archiveUsers);
+                return "user added to archive ";
+            }
+        } else {
+            throw new IllegalArgumentException("User is null");
+        }
     }
 
-    public String deleteEtud (int id){
-        Optional<User> myUserEns = userRepository.findUserByEtudiantId((id));
+    public String deleteEns (int id,String description){
+        Optional<User> myUserEns = userRepository.findUserByEnseignantId((id));
+        String msg = addUserToArchive(myUserEns,description);
         userRepository.deleteById(myUserEns.get().getId());
-        etudiantRepository.deleteById(id);
+        //enseignantRepository.deleteById(id);
+        return "Enseignant Deleted Successfully from users !";
+    }
+
+
+    public String deleteEtud (int id,String description){
+        Optional<User> myUserEns = userRepository.findUserByEtudiantId((id));
+        String msg = addUserToArchive(myUserEns,description);
+        userRepository.deleteById(myUserEns.get().getId());
+        //etudiantRepository.deleteById(id);
         return "Etudiant Deleted Successfully !";
     }
 
-    public String deleteAdmin (int id){
+    public String deleteAdmin (int id,String description){
         Optional<User> myUserEns = userRepository.findUserByAdminId((id));
+        String msg = addUserToArchive(myUserEns,description);
         userRepository.deleteById(myUserEns.get().getId());
-        adminRepository.deleteById(id);
+        //adminRepository.deleteById(id);
         return "Admin Deleted Successfully !";
     }
     public User updateUser(User user){
@@ -171,6 +208,11 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public List<ArchiveUsers> getAllArchiveUsers() {
+        return archiveUsersRepository.findAll();
+
     }
 
 }
