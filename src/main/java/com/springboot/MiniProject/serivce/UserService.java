@@ -271,8 +271,6 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
     public EtudiantDTO updateEtudiant(EtudiantDTO etudiantDTO) {
         Etudiant etudiantExist = etudiantRepository.findEtudiantByNumInscri(etudiantDTO.getNum_inscri());
         User userExist = userRepository.findUserByEtudiantId(etudiantExist.getId());
-        //List <Groupe> groupes = groupeRepository.findAllById(enseignant.getIdGroupes());
-        //etudiantExist.setGroupes(groupes);
         Optional<Groupe> groupe =groupeRepository.findById(etudiantExist.getId());
         etudiantExist.setGroupe(groupe.get());
         userExist.setNom(etudiantDTO.getNom());
