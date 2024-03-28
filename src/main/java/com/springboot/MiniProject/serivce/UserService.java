@@ -1,6 +1,7 @@
 package com.springboot.MiniProject.serivce;
 
 
+import com.springboot.MiniProject.controller.EtudiantController;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
@@ -186,6 +187,8 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
         }
         return etudiantDTOs;
     }
+
+
     @Override
     public List<EnseignantDTO> findAllEnseignant() {
         List <Enseignant> enseignants = enseignantRepository.findAll();
@@ -211,6 +214,7 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
         etudiantDTO.setPrenom(user.getPrenom());
         etudiantDTO.setEmail(user.getEmail());
         etudiantDTO.setNumtel(user.getNumtel());
+        etudiantDTO.setPassword(user.getPassword());
         etudiantDTO.setDate_nais(user.getDate_nais());
         return etudiantDTO;
     }
@@ -262,6 +266,25 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
         userRepository.save(userExist);
         enseignantRepository.save(enseignantExist);
         EnseignantDTO enseignantDTOExists = getEnsignantDTO(enseignantExist, userExist);
+        return enseignantDTOExists;
+    }
+    public EtudiantDTO updateEtudiant(EtudiantDTO etudiantDTO) {
+        Etudiant etudiantExist = etudiantRepository.findEtudiantByNumInscri(etudiantDTO.getNum_inscri());
+        User userExist = userRepository.findUserByEtudiantId(etudiantExist.getId());
+        //List <Groupe> groupes = groupeRepository.findAllById(enseignant.getIdGroupes());
+        //etudiantExist.setGroupes(groupes);
+        Optional<Groupe> groupe =groupeRepository.findById(etudiantExist.getId());
+        etudiantExist.setGroupe(groupe.get());
+        userExist.setNom(etudiantDTO.getNom());
+        userExist.setEmail(etudiantDTO.getEmail());
+        userExist.setPrenom(etudiantDTO.getPrenom());
+        userExist.setNumtel(etudiantDTO.getNumtel());
+        userExist.setCIN(etudiantDTO.getCIN());
+        userExist.setDate_nais(etudiantDTO.getDate_nais());
+        userExist.setPassword(passwordEncoder.encode(etudiantDTO.getPassword()));
+        userRepository.save(userExist);
+        etudiantRepository.save(etudiantExist);
+        EtudiantDTO enseignantDTOExists = getEtudiantDTO(etudiantExist, userExist);
         return enseignantDTOExists;
     }
 
