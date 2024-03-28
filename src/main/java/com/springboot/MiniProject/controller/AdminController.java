@@ -2,6 +2,7 @@ package com.springboot.MiniProject.controller;
 
 
 import com.springboot.MiniProject.dto.*;
+import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.EtudiantService;
@@ -62,8 +63,8 @@ public class AdminController {
     public String deleteAdmin(@PathVariable int id){
         return service.deleteAdmin(id);
     }
-   // @PutMapping("/update/enseignant")
-    //public Enseignant updateEnseignant(@RequestBody Enseignant Enseigant){return enseignantService.updateEnseignant(Enseigant);}
+    @PutMapping("/update/enseignant")
+    public EnseignantDTO updateEnseignant(@RequestBody EnseignantDTO Enseigant){return service.updateEnseignant(Enseigant);}
 
     @PutMapping("/update/user")
     public User updateUser(@RequestBody User user){return service.updateUser(user);}
@@ -89,7 +90,7 @@ public class AdminController {
         }
     }*/
     @GetMapping("/numProf/{numProf}")
-    public ResponseEntity<EnseignantDTO> getEnseignantByNumProf(@PathVariable double numProf) {
+    public ResponseEntity<EnseignantDTO> getEnseignantByNumProf(@PathVariable int numProf) {
         EnseignantDTO enseignantDTO = service.findByNumProf(numProf);
         if (enseignantDTO != null) {
             return ResponseEntity.ok(enseignantDTO);

@@ -12,7 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 public class EnseignantDTO {
     private int idEnseignant;
-    private double num_prof;
+    private int num_prof;
+    private String diplome;
     private List<Integer> idGroupes ;
     private String nom;
     private String prenom;
