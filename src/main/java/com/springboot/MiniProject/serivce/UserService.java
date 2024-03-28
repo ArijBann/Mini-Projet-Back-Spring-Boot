@@ -1,10 +1,7 @@
 package com.springboot.MiniProject.serivce;
 
 
-import com.springboot.MiniProject.dto.EtudiantDTO;
-import com.springboot.MiniProject.dto.UserAdminDTO;
-import com.springboot.MiniProject.dto.UserEnseigantDTO;
-import com.springboot.MiniProject.dto.UserEtudiantDTO;
+import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
 import jakarta.mail.MessagingException;
@@ -22,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements  EtudiantInterface {
+public class UserService implements  EtudiantInterface ,EnseignantInterface{
 
 
     @Autowired
@@ -37,8 +34,7 @@ public class UserService implements  EtudiantInterface {
     private AdminRepository adminRepository;
     @Autowired
     private EmailSenderService emailSenderService;
-@Autowired
-private GroupeService groupeService;
+
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();
@@ -146,14 +142,9 @@ private GroupeService groupeService;
         return userRepository.save(existingEUser);
     }
 
-    public List<UserEnseigantDTO> getAllEnseignants() {
-        List<Enseignant> enseignants = enseignantRepository.findAll();
-        return enseignants.stream()
-                .map(enseignant -> new UserEnseigantDTO(userRepository.findUserByEnseignantId(enseignant.getId()).orElse(null), enseignant))
-                .collect(Collectors.toList());
-    }
 
-    public UserEnseigantDTO getEnseignantByEmail(String email) {
+
+   /* public UserEnseigantDTO getEnseignantByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent() && user.get().getEnseignant() != null) {
             Enseignant enseignant = user.get().getEnseignant();
@@ -161,16 +152,8 @@ private GroupeService groupeService;
         } else {
             return null;
         }
-    }
+    }*/
 
-    public UserEnseigantDTO getEnseignantByNumProf(int numProf) {
-        Optional<Enseignant> user = enseignantRepository.findByNumProf(numProf);
-        if (user != null) {
-            return new UserEnseigantDTO(userRepository.findUserByEnseignantId(user.get().getId()).orElse(null), user.get());
-        } else {
-            return null;
-        }
-    }
 
 
 
@@ -213,7 +196,21 @@ private GroupeService groupeService;
         }
         return etudiantDTOs;
     }
-
+    @Override
+    public List<EnseignantDTO> findAllEnseignant() {
+        List <Enseignant> enseignants = enseignantRepository.findAll();
+        List<EnseignantDTO> enseignantsDTO = new ArrayList<>();
+        for (Enseignant enseignant : enseignants) {
+            // Assuming that User information is available in the Etudiant entity
+            Optional<User> user=userRepository.findUserByEnseignantId(enseignant.getId());
+            if (user.isPresent()) {
+                EnseignantDTO enseignantDTO = getEnsignantDTO(enseignant, user);
+                // Add the DTO to the list
+                enseignantsDTO.add(enseignantDTO);
+            }
+        }
+        return enseignantsDTO;
+    }
     private static EtudiantDTO getEtudiantDTO(Etudiant etudiant, Optional<User> user) {
         EtudiantDTO etudiantDTO = new EtudiantDTO();
         etudiantDTO.setIdEtudiant(etudiant.getId());
@@ -229,4 +226,27 @@ private GroupeService groupeService;
     }
 
 
+
+
+    @Override
+    public EnseignantDTO findByNumProf(double numProf) {
+        Enseignant etudiant = enseignantRepository.findByNumProf(numProf);
+        Optional<User> user=userRepository.findUserByEnseignantId(etudiant.getId());
+        EnseignantDTO etudiantDTO = getEnsignantDTO(etudiant, user);
+        return etudiantDTO;
+    }
+
+    private static EnseignantDTO getEnsignantDTO(Enseignant etudiant, Optional<User> user) {
+        EnseignantDTO etudiantDTO = new EnseignantDTO();
+        etudiantDTO.setIdEnseignant(etudiant.getId());
+        etudiantDTO.setNum_prof(etudiant.getNumProf());
+        etudiantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
+        etudiantDTO.setCIN(user.get().getCIN());
+        etudiantDTO.setNom(user.get().getNom());
+        etudiantDTO.setPrenom(user.get().getPrenom());
+        etudiantDTO.setEmail(user.get().getEmail());
+        etudiantDTO.setNumtel(user.get().getNumtel());
+        etudiantDTO.setDate_nais(user.get().getDate_nais());
+        return etudiantDTO;
+    }
 }

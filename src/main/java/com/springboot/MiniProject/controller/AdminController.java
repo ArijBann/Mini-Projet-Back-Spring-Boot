@@ -1,10 +1,7 @@
 package com.springboot.MiniProject.controller;
 
 
-import com.springboot.MiniProject.dto.EtudiantDTO;
-import com.springboot.MiniProject.dto.UserAdminDTO;
-import com.springboot.MiniProject.dto.UserEnseigantDTO;
-import com.springboot.MiniProject.dto.UserEtudiantDTO;
+import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.EtudiantService;
@@ -78,11 +75,11 @@ public class AdminController {
 */
 
     @GetMapping("/allEnseignants")
-    public List<UserEnseigantDTO> getAllEnseignants() {
-        return service.getAllEnseignants();
+    public List<EnseignantDTO> getAllEnseignants() {
+        return service.findAllEnseignant();
     }
 
-    @GetMapping("/Enseignantbyemail/{email}")
+    /*@GetMapping("/Enseignantbyemail/{email}")
     public ResponseEntity<UserEnseigantDTO> getEnseignantByEmail(@PathVariable String email) {
         UserEnseigantDTO enseignantDTO = service.getEnseignantByEmail(email);
         if (enseignantDTO != null) {
@@ -90,10 +87,10 @@ public class AdminController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
+    }*/
     @GetMapping("/numProf/{numProf}")
-    public ResponseEntity<UserEnseigantDTO> getEnseignantByNumProf(@PathVariable int numProf) {
-        UserEnseigantDTO enseignantDTO = service.getEnseignantByNumProf(numProf);
+    public ResponseEntity<EnseignantDTO> getEnseignantByNumProf(@PathVariable double numProf) {
+        EnseignantDTO enseignantDTO = service.findByNumProf(numProf);
         if (enseignantDTO != null) {
             return ResponseEntity.ok(enseignantDTO);
         } else {
