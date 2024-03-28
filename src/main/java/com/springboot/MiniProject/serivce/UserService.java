@@ -1,6 +1,7 @@
 package com.springboot.MiniProject.serivce;
 
 
+import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
@@ -13,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -20,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements  EtudiantInterface {
 
 
     @Autowired
@@ -169,22 +171,62 @@ private GroupeService groupeService;
             return null;
         }
     }
-    public List<UserEtudiantDTO> getAllEtudiants() {
-        List<Etudiant> etudiants = etudiantRepository.findAll();
-        return etudiants.stream()
-                .map(etudiant -> new UserEtudiantDTO(userRepository.findUserByEtudiantId(etudiant.getId()).orElse(null), etudiant))
-                .collect(Collectors.toList());
+
+
+
+    @Override
+    public EtudiantDTO findByNumInscri(double numInscri) {
+        Etudiant etudiant = etudiantRepository.findEtudiantByNumInscri(numInscri);
+        Optional<User> user=userRepository.findUserByEtudiantId(etudiant.getId());
+        EtudiantDTO etudiantDTO = getEtudiantDTO(etudiant, user);
+        return etudiantDTO;
     }
-        public UserEtudiantDTO getEtudiantByNumInscri(double numInscri) {
-        Etudiant user = etudiantRepository.findEtudiantByNumInscri(numInscri);
-        if (user != null) {
-            return new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.getId()).orElse(null), user);
-        } else {
-            return null;
+    @Override
+    public List<EtudiantDTO> findByIdGroupe(int idGroupe) {
+        List<Etudiant> etudiants = etudiantRepository.findByGroupeId(idGroupe);
+        List<EtudiantDTO> etudiantDTOs = new ArrayList<>();
+
+        for (Etudiant etudiant : etudiants) {
+            // Assuming that User information is available in the Etudiant entity
+            Optional<User> user=userRepository.findUserByEtudiantId(etudiant.getId());
+            if (user.isPresent()) {
+                EtudiantDTO etudiantDTO = getEtudiantDTO(etudiant, user);
+                // Add the DTO to the list
+                etudiantDTOs.add(etudiantDTO);
+            }
         }
+        return etudiantDTOs;
     }
-    public List<Etudiant> getEtudiantByGroupe(int idGroupe) {
-        Optional<Groupe> groupeExist = groupeService.getGroupeById(idGroupe);
-        return etudiantRepository.findEtudiantByGroupe(groupeExist);
+
+    @Override
+    public List<EtudiantDTO> findAllEtudiant() {
+        List <Etudiant> etudiants = etudiantRepository.findAll();
+        List<EtudiantDTO> etudiantDTOs = new ArrayList<>();
+        for (Etudiant etudiant : etudiants) {
+            // Assuming that User information is available in the Etudiant entity
+            Optional<User> user=userRepository.findUserByEtudiantId(etudiant.getId());
+            if (user.isPresent()) {
+                EtudiantDTO etudiantDTO = getEtudiantDTO(etudiant, user);
+                // Add the DTO to the list
+                etudiantDTOs.add(etudiantDTO);
+            }
+        }
+        return etudiantDTOs;
     }
+
+    private static EtudiantDTO getEtudiantDTO(Etudiant etudiant, Optional<User> user) {
+        EtudiantDTO etudiantDTO = new EtudiantDTO();
+        etudiantDTO.setIdEtudiant(etudiant.getId());
+        etudiantDTO.setNum_inscri(etudiant.getNumInscri());
+        etudiantDTO.setIdGroupe(etudiant.getGroupe().getId());
+        etudiantDTO.setCIN(user.get().getCIN());
+        etudiantDTO.setNom(user.get().getNom());
+        etudiantDTO.setPrenom(user.get().getPrenom());
+        etudiantDTO.setEmail(user.get().getEmail());
+        etudiantDTO.setNumtel(user.get().getNumtel());
+        etudiantDTO.setDate_nais(user.get().getDate_nais());
+        return etudiantDTO;
+    }
+
+
 }

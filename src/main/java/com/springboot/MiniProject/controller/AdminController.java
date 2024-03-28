@@ -1,10 +1,10 @@
 package com.springboot.MiniProject.controller;
 
 
+import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.EtudiantService;
@@ -17,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/issatso/admin")
@@ -103,8 +102,8 @@ public class AdminController {
     }
 
     @GetMapping("/getEtudiantByInscrit/{numInscri}")
-    public ResponseEntity<UserEtudiantDTO>getEtudiantByInscri(@PathVariable double numInscri) {
-        UserEtudiantDTO userEtudiantDTO = service.getEtudiantByNumInscri(numInscri);
+    public ResponseEntity<EtudiantDTO> getEtudiantByInscri(@PathVariable double numInscri) {
+        EtudiantDTO userEtudiantDTO = service.findByNumInscri(numInscri);
         if (userEtudiantDTO != null) {
             return ResponseEntity.ok(userEtudiantDTO);
         } else {
@@ -113,11 +112,11 @@ public class AdminController {
     }
 
     @GetMapping("/allEtudiant")
-    public List<UserEtudiantDTO> getAllEtudiants() {
-        return service.getAllEtudiants();
+    public List<EtudiantDTO> getAllEtudiants() {
+        return service.findAllEtudiant();
     }
     @GetMapping("/getEtudiantByGroupe/{idGroupe}")
-    public List<Etudiant> getEtudiantsByGroupe(@PathVariable int idGroupe) {
-        return service.getEtudiantByGroupe(idGroupe);
+    public List<EtudiantDTO> getEtudiantsByGroupe(@PathVariable int idGroupe) {
+        return service.findByIdGroupe(idGroupe);
     }
 }
