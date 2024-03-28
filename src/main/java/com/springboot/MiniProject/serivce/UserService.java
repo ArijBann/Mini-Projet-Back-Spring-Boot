@@ -240,6 +240,7 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
         etudiantDTO.setEmail(user.getEmail());
         etudiantDTO.setNumtel(user.getNumtel());
         etudiantDTO.setDate_nais(user.getDate_nais());
+        etudiantDTO.setPassword(user.getPassword());
         return etudiantDTO;
     }
 
@@ -257,7 +258,7 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
         userExist.setNumtel(enseignant.getNumtel());
         userExist.setCIN(enseignant.getCIN());
         userExist.setDate_nais(enseignant.getDate_nais());
-        userExist.setPassword(enseignant.getPassword());
+        userExist.setPassword(passwordEncoder.encode(enseignant.getPassword()));
         userRepository.save(userExist);
         enseignantRepository.save(enseignantExist);
         EnseignantDTO enseignantDTOExists = getEnsignantDTO(enseignantExist, userExist);

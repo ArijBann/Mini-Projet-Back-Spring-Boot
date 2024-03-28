@@ -66,9 +66,6 @@ public class AdminController {
     @PutMapping("/update/enseignant")
     public EnseignantDTO updateEnseignant(@RequestBody EnseignantDTO Enseigant){return service.updateEnseignant(Enseigant);}
 
-    @PutMapping("/update/user")
-    public User updateUser(@RequestBody User user){return service.updateUser(user);}
-
    // @PutMapping("/update/etudiant")
     //public Etudiant updateEtudiant(@RequestBody Etudiant etudiant){return etudiantService.updateEtudiant(etudiant);}
  /*   @PutMapping("/update/admin")
