@@ -6,16 +6,13 @@ import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -35,8 +32,9 @@ public class UserService {
     private AdminRepository adminRepository;
     @Autowired
     private EmailSenderService emailSenderService;
-@Autowired
-private GroupeService groupeService;
+    @Autowired
+    private ArchiveUsersRepository archiveUsersRepository ;
+
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();
@@ -112,26 +110,68 @@ private GroupeService groupeService;
 
     }
 
-    public String deleteEns (int id){
+   /* public String deleteEns (int id){
         Optional<User> myUserEns = userRepository.findUserByEnseignantId((id));
          userRepository.deleteById(myUserEns.get().getId());
          enseignantRepository.deleteById(id);
         return "Enseignant Deleted Successfully !";
+    }*/
+
+
+    public String addUserToArchive(Optional<User> user , String description){
+        if (user.isPresent()) {
+            ArchiveUsers archiveUsers = new ArchiveUsers();
+            boolean userExists = archiveUsersRepository
+                    .findByEmail(user.get().getEmail())
+                    .isPresent();
+            if (userExists) {
+                throw new IllegalStateException("email already taken");
+            } else {
+                archiveUsers.setNom(user.get().getNom());
+                archiveUsers.setPrenom(user.get().getPrenom());
+                archiveUsers.setEmail(user.get().getEmail());
+                archiveUsers.setPassword(user.get().getPassword());
+                archiveUsers.setCIN(user.get().getCIN());
+                archiveUsers.setDate_nais(user.get().getDate_nais());
+                archiveUsers.setNumtel(user.get().getNumtel());
+                archiveUsers.setEtudiant(user.get().getEtudiant());
+                archiveUsers.setEnseignant(user.get().getEnseignant());
+                archiveUsers.setAdmin(user.get().getAdmin());
+                archiveUsers.setDate_suppression(LocalDateTime.now());
+                archiveUsers.setDescription(description);
+                archiveUsersRepository.save(archiveUsers);
+                return "user added to archive ";
+            }
+        } else {
+            throw new IllegalArgumentException("User is null");
+        }
     }
 
-    public String deleteEtud (int id){
-        Optional<User> myUserEns = userRepository.findUserByEtudiantId((id));
-        userRepository.deleteById(myUserEns.get().getId());
-        etudiantRepository.deleteById(id);
-        return "Etudiant Deleted Successfully !";
+    public String deleteEns (int numProf,String description){
+        Optional<Enseignant> user = enseignantRepository.findByNumProf(numProf);
+        UserEnseigantDTO userEnseigantDTO =new UserEnseigantDTO(userRepository.findUserByEnseignantId(user.get().getId()).orElse(null), user.get());
+        String msg = addUserToArchive(Optional.ofNullable(userEnseigantDTO.getUser()),description);
+        userRepository.deleteById(userEnseigantDTO.getUser().getId());
+        //enseignantRepository.deleteById(userEnseigantDTO.getEnseignant().getId());
+        return "Enseignant Deleted Successfully from users !";
     }
 
-    public String deleteAdmin (int id){
+    public String deleteEtud (int numInscrit, String description){
+        Etudiant user = etudiantRepository.findEtudiantByNumInscri(numInscrit);
+        UserEtudiantDTO userEtudiantDTO =new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.getId()).orElse(null), user);
+        String msg = addUserToArchive(Optional.ofNullable(userEtudiantDTO.getUser()),description);
+        userRepository.deleteById(userEtudiantDTO.getUser().getId());
+        return "Etudiant Deleted Successfully from users !";
+    }
+
+    public String deleteAdmin (int id,String description){
         Optional<User> myUserEns = userRepository.findUserByAdminId((id));
+        String msg = addUserToArchive(myUserEns,description);
         userRepository.deleteById(myUserEns.get().getId());
-        adminRepository.deleteById(id);
+        //adminRepository.deleteById(id);
         return "Admin Deleted Successfully !";
     }
+
     public User updateUser(User user){
         User existingEUser = userRepository.findById(user.getId()).orElse(null);
         existingEUser.setPassword(user.getPassword());
@@ -161,6 +201,7 @@ private GroupeService groupeService;
         }
     }
 
+
     public UserEnseigantDTO getEnseignantByNumProf(int numProf) {
         Optional<Enseignant> user = enseignantRepository.findByNumProf(numProf);
         if (user != null) {
@@ -169,22 +210,10 @@ private GroupeService groupeService;
             return null;
         }
     }
-    public List<UserEtudiantDTO> getAllEtudiants() {
-        List<Etudiant> etudiants = etudiantRepository.findAll();
-        return etudiants.stream()
-                .map(etudiant -> new UserEtudiantDTO(userRepository.findUserByEtudiantId(etudiant.getId()).orElse(null), etudiant))
-                .collect(Collectors.toList());
+
+    public List<ArchiveUsers> getAllArchiveUsers() {
+        return archiveUsersRepository.findAll();
+
     }
-        public UserEtudiantDTO getEtudiantByNumInscri(double numInscri) {
-        Etudiant user = etudiantRepository.findEtudiantByNumInscri(numInscri);
-        if (user != null) {
-            return new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.getId()).orElse(null), user);
-        } else {
-            return null;
-        }
-    }
-    public List<Etudiant> getEtudiantByGroupe(int idGroupe) {
-        Optional<Groupe> groupeExist = groupeService.getGroupeById(idGroupe);
-        return etudiantRepository.findEtudiantByGroupe(groupeExist);
-    }
+
 }
