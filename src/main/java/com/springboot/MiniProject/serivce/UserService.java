@@ -99,7 +99,7 @@ public class UserService {
                     "\n" +
 
                     "Pour toute question veuillez nous contacter au 71 834 746 ou par email sur iissatso@mesrs.tn");
-            userEtudiantDTO.getEtudiant().setNum_inscri(RandomInscrit);
+            userEtudiantDTO.getEtudiant().setNumInscri(RandomInscrit);
             etudiantRepository.save(etudiant);
             user.setEtudiant(etudiant);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -155,9 +155,10 @@ public class UserService {
         //enseignantRepository.deleteById(userEnseigantDTO.getEnseignant().getId());
         return "Enseignant Deleted Successfully from users !";
     }
+
     public String deleteEtud (int numInscrit, String description){
-        Optional<Etudiant> user = etudiantRepository.findEtudiantByNum_inscri(numInscrit);
-        UserEtudiantDTO userEtudiantDTO =new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.get().getId()).orElse(null), user.get());
+        Etudiant user = etudiantRepository.findEtudiantByNumInscri(numInscrit);
+        UserEtudiantDTO userEtudiantDTO =new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.getId()).orElse(null), user);
         String msg = addUserToArchive(Optional.ofNullable(userEtudiantDTO.getUser()),description);
         userRepository.deleteById(userEtudiantDTO.getUser().getId());
         return "Etudiant Deleted Successfully from users !";

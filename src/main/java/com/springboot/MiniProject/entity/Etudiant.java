@@ -15,7 +15,8 @@ public class Etudiant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double num_inscri;
+    @Column(name = "num_inscri")
+    private double numInscri;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "groupe_id")
     private Groupe groupe;

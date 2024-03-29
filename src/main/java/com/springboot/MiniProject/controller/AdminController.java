@@ -4,12 +4,11 @@ package com.springboot.MiniProject.controller;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
+import com.springboot.MiniProject.entity.Actualitees;
 import com.springboot.MiniProject.entity.ArchiveUsers;
+import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.User;
-import com.springboot.MiniProject.serivce.EnseignantService;
-import com.springboot.MiniProject.serivce.EtudiantService;
-import com.springboot.MiniProject.serivce.JwtService;
-import com.springboot.MiniProject.serivce.UserService;
+import com.springboot.MiniProject.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +32,8 @@ public class AdminController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private EtudiantService etudiantService;
+    @Autowired
+    private ActualiteesService actualiteesService ;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -58,10 +59,12 @@ public class AdminController {
     public String deleteEnsegnant(@PathVariable int numProf,@PathVariable String desc){
         return service.deleteEns(numProf,desc);
     }
+
   @DeleteMapping("/delete/etudiant/{numinscri}/{desc}")
     public String deleteEtudiant(@PathVariable int numinscri,@PathVariable String desc){
         return service.deleteEtud(numinscri,desc);
     }
+
     @DeleteMapping("/delete/admin/{id}/{desc}")
     public String deleteAdmin(@PathVariable int id,@PathVariable String desc){
         return service.deleteAdmin(id,desc);
@@ -106,5 +109,42 @@ public class AdminController {
         return service.getAllArchiveUsers();
     }
 
+    @GetMapping("/allEtudiants")
+    public List<Etudiant> getAllEtudiant() {
+        return etudiantService.getAllEtudiant();
+    }
+    @GetMapping("/EtudiantsBynuminscrit/{numinscrit}")
+    public Etudiant getEtudiantByNumInscrit(@PathVariable int numinscrit) {
+        return etudiantService.getEtudiantByNumInscrit(numinscrit);
+    }
 
+
+
+    /////Actualitees/////
+
+    @GetMapping("/Actualitees/allActualitees")
+    public List<Actualitees> getAllNews() {
+        return actualiteesService.getAllNews();
+    }
+
+    @GetMapping("/Actualitees/{id}")
+    public Actualitees getNewsById(@PathVariable Long id) {
+        return actualiteesService.getNewsById(id);
+    }
+
+    @PostMapping("/Actualitees/AddActualitees")
+    public String createNews(@RequestBody Actualitees news) {
+        return actualiteesService.createOrUpdateNews(news);
+    }
+
+    @PutMapping("/Actualitees/UpdateActualitees/{id}")
+    public String updateNews(@PathVariable Long id, @RequestBody Actualitees news) {
+        news.setId(id);
+        return actualiteesService.createOrUpdateNews(news);
+    }
+
+    @DeleteMapping("/delete/Actualitees/{id}")
+    public void deleteNews(@PathVariable Long id) {
+        actualiteesService.deleteNews(id);
+    }
 }
