@@ -1,5 +1,6 @@
 package com.springboot.MiniProject.controller;
 
+import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.serivce.EtudiantService;
 import com.springboot.MiniProject.serivce.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,9 @@ public class EtudiantController {
         return "Welcome etud";
     }
 
+    @PutMapping("/update/NumTel")
+    public EtudiantDTO updateErudiantInfo(@RequestBody EtudiantDTO etudiantDTO){
+        return etudiantService.updateEtudiantInfo(etudiantDTO);
+    }
 
 }

@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface EnseignantRepository extends JpaRepository<Enseignant,Integer> {
    // Enseignant findByEmail(String email);
-   Optional <Enseignant> findByNumProf(int numProf);
+   Enseignant findByNumProf(double numProf);
 }
