@@ -33,39 +33,6 @@ public class UserController {
         return "Welcome this endpoint is not secure";
     }
 
-    @PostMapping("/user/enseignant")
-    public String addNewEns(@RequestBody UserEnseigantDTO userEnseigantDTO){
-        return service.addEns(userEnseigantDTO);
-    }
-
-    @PostMapping("/user/etudiant")
-    public String addNewEns(@RequestBody UserEtudiantDTO userEtudiantDTO){
-        return service.addEtud(userEtudiantDTO);
-    }
-    @PostMapping("/user/admin")
-    public String addNewEns(@RequestBody UserAdminDTO userAdminDTO){
-        return service.addAdmin(userAdminDTO);
-    }
-    //cette PAGE est accessible par les etudiants seulement
-    @GetMapping("/welcome/etud")
-    @PreAuthorize("hasAuthority('ROLE_ETUD')")
-    public String welcomeEtud() {
-        return "Welcome etud";
-    }
-
-    //cette PAGE est accessible par les admins seulement
-    @GetMapping("/welcome/admin")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public String welcomeAdmin() {
-        return "Welcome ens";
-    }
-    //cette PAGE est accessible par les enseignants seulement
-    @GetMapping("/welcome/ens")
-    @PreAuthorize("hasAuthority('ROLE_ENS')")
-    public String welcomeEns() {
-        return "Welcome ens";
-    }
-
 
     @PostMapping("/authentificat")
     public JwtResponse authentificateAndGetToken(@RequestBody AuthRequest authRequest){

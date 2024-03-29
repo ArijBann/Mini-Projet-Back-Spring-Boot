@@ -4,7 +4,6 @@ package com.springboot.MiniProject.controller;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.EtudiantService;
@@ -100,24 +99,5 @@ public class AdminController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping("/getEtudiantByInscrit/{numInscri}")
-    public ResponseEntity<UserEtudiantDTO>getEtudiantByInscri(@PathVariable double numInscri) {
-        UserEtudiantDTO userEtudiantDTO = service.getEtudiantByNumInscri(numInscri);
-        if (userEtudiantDTO != null) {
-            return ResponseEntity.ok(userEtudiantDTO);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/allEtudiant")
-    public List<UserEtudiantDTO> getAllEtudiants() {
-        return service.getAllEtudiants();
-    }
-    @GetMapping("/getEtudiantByGroupe/{idGroupe}")
-    public List<Etudiant> getEtudiantsByGroupe(@PathVariable int idGroupe) {
-        return service.getEtudiantByGroupe(idGroupe);
     }
 }
