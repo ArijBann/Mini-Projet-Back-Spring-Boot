@@ -16,6 +16,7 @@ public class ActualiteesService {
 
     public List<Actualitees> getAllNews() {
         return actualiteesRepository.findAll();
+
     }
 
     public Actualitees getNewsById(Long id) {
@@ -27,7 +28,7 @@ public class ActualiteesService {
         Date currentDateAsDate = java.sql.Date.valueOf(currentDate);
         news.setDate(currentDateAsDate);
         actualiteesRepository.save(news);
-        return "Actualite added ";
+        return "Actualitee added ";
     }
 
     public void deleteNews(Long id) {
