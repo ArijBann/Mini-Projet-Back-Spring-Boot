@@ -34,6 +34,8 @@ public class UserService {
     private EmailSenderService emailSenderService;
     @Autowired
     private ArchiveUsersRepository archiveUsersRepository ;
+    @Autowired
+    private MatiereRepository matiereRepository ;
 
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
@@ -216,4 +218,34 @@ public class UserService {
 
     }
 
+    /////Matiere ///////
+
+    public String addMatiere(Matiere mat){
+        boolean MatiereExists =matiereRepository
+                .findByLibelleMatiere(mat.getLibelleMatiere())
+                .isPresent();
+        if(MatiereExists){
+            throw new IllegalStateException("Matiere deja exist");
+        }else {
+            matiereRepository.save(mat);
+            return "Matiere added to the system";
+        }
+    }
+
+    public Matiere updateMatiere(Matiere mat){
+       Matiere ExistingMatiere =matiereRepository
+                .findById(mat.getId()).orElse(null);
+        ExistingMatiere.setLibelleMatiere(mat.getLibelleMatiere());
+        ExistingMatiere.setCoefMat(mat.getCoefMat());
+        return matiereRepository.save(mat);
+    }
+    public String deleteMatiere(int id){
+        matiereRepository.deleteById(id);
+        return "Matiere Deleted Successfully !";
+    }
+    public String deleteMatiereByLib(String lib){
+        Optional<Matiere> mat = matiereRepository.findByLibelleMatiere(lib);
+        matiereRepository.deleteById(mat.get().getId());
+        return "Enseignant Deleted Successfully !";
+    }
 }
