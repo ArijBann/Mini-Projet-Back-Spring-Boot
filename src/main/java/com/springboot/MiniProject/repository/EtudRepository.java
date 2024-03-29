@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface EtudRepository extends JpaRepository<Etudiant,Integer> {
-    Etudiant findEtudiantByNum_inscri(int numInscrit);
+    Etudiant findEtudiantByNumInscri(int numInscrit);
     List <Etudiant> findEtudiantByGroupe(int idGroupe);
 }
