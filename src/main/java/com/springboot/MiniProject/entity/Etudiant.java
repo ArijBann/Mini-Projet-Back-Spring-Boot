@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -20,6 +22,8 @@ public class Etudiant {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "groupe_id")
     private Groupe groupe;
+    @OneToMany(mappedBy = "etudiant")
+    private List<EtudMatiere> etudMatieres;
 
 
 
