@@ -18,7 +18,6 @@ public class Matiere {
     private int id;
     private String libelleMatiere ;
     private int coefMat ;
-    private int idSupport;
     @OneToMany(mappedBy = "matiere")
     private List<EtudMatiere> etudMatieres;
     @OneToMany(mappedBy = "matiere")

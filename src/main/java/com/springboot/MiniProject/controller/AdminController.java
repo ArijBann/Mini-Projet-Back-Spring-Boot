@@ -4,10 +4,7 @@ package com.springboot.MiniProject.controller;
 import com.springboot.MiniProject.dto.UserAdminDTO;
 import com.springboot.MiniProject.dto.UserEnseigantDTO;
 import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.Actualitees;
-import com.springboot.MiniProject.entity.ArchiveUsers;
-import com.springboot.MiniProject.entity.Etudiant;
-import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +31,8 @@ public class AdminController {
     private EtudiantService etudiantService;
     @Autowired
     private ActualiteesService actualiteesService ;
+    @Autowired
+    private MatiereService matiereService ;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -104,10 +103,15 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    ////Archive /////
+
     @GetMapping("/allArchiveUsers")
     public List<ArchiveUsers> getAllArchiveUsers() {
         return service.getAllArchiveUsers();
     }
+
+    ////Etudiants /////
 
     @GetMapping("/allEtudiants")
     public List<Etudiant> getAllEtudiant() {
@@ -147,4 +151,45 @@ public class AdminController {
     public void deleteNews(@PathVariable Long id) {
         actualiteesService.deleteNews(id);
     }
+
+
+    /////Matiere ////
+
+    @GetMapping("/Matiere/allMatieres")
+    public List<Matiere> getallMatieres() {
+        return matiereService.getAllMatiere();
+    }
+    @GetMapping("/Matiere/{id}")
+    public Optional<Matiere> getMatiereById(@PathVariable int id) {
+        return matiereService.getMatiereById(id);
+    }
+    @GetMapping("/Matiere/{lib}")
+    public Optional<Matiere> getMatiereById(@PathVariable String lib) {
+        return matiereService.getMatiereBylib(lib);
+    }
+   /* @GetMapping("/Matiere/{idens}")
+    public Optional<List<Matiere>> getMatiereByIdEns(@PathVariable int idens) {
+        return matiereService.getMatiereByEns(idens);
+    }*/
+    @PostMapping("/Matiere/addMatiere")
+    public String createMatiere(@RequestBody Matiere mat) {
+        return matiereService.addMatiere(mat);
+    }
+
+    @PutMapping("/Matiere/UpdateMatiere/{id}")
+    public String updateMatiere(@PathVariable int id, @RequestBody Matiere mat) {
+        mat.setId(id);
+        return matiereService.addMatiere(mat);
+    }
+
+    @DeleteMapping("/delete/Matiere/{id}")
+    public void deleteMatiereid(@PathVariable int id) {
+        matiereService.deleteMatiere(id);
+    }
+    @DeleteMapping("/delete/Matiere/{lib}")
+    public void deleteMatiereLib(@PathVariable String lib) {
+        matiereService.deleteMatiereByLib(lib);
+    }
+
+
 }

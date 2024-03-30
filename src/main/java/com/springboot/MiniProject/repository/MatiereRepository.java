@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface MatiereRepository  extends JpaRepository<Matiere, Integer> {
     Optional<Matiere> findByLibelleMatiere(String libMat);
-    Optional <List<Matiere> >findByEnseignantId(int idEnseignant);
-    Optional <List <Matiere>> findByGroupe(int idGroupe);
+   // Optional <List<Matiere> >findByEnseignantId(int idEnseignant);
+   // Optional <List <Matiere>> findByGroupe(int idGroupe);
 
 }
