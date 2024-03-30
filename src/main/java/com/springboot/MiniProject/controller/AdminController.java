@@ -1,10 +1,11 @@
 package com.springboot.MiniProject.controller;
 
 
-import com.springboot.MiniProject.dto.UserAdminDTO;
-import com.springboot.MiniProject.dto.UserEnseigantDTO;
-import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.*;
+
+import com.springboot.MiniProject.dto.*;
+import com.springboot.MiniProject.entity.ArchiveUsers;
+import com.springboot.MiniProject.entity.Enseignant;
+import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/issatso/admin")
@@ -29,6 +29,7 @@ public class AdminController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private EtudiantService etudiantService;
+
     @Autowired
     private ActualiteesService actualiteesService ;
     @Autowired
@@ -59,7 +60,7 @@ public class AdminController {
         return service.deleteEns(numProf,desc);
     }
 
-  @DeleteMapping("/delete/etudiant/{numinscri}/{desc}")
+    @DeleteMapping("/delete/etudiant/{numinscri}/{desc}")
     public String deleteEtudiant(@PathVariable int numinscri,@PathVariable String desc){
         return service.deleteEtud(numinscri,desc);
     }
@@ -68,24 +69,21 @@ public class AdminController {
     public String deleteAdmin(@PathVariable int id,@PathVariable String desc){
         return service.deleteAdmin(id,desc);
     }
-   // @PutMapping("/update/enseignant")
-    //public Enseignant updateEnseignant(@RequestBody Enseignant Enseigant){return enseignantService.updateEnseignant(Enseigant);}
+    @PutMapping("/update/enseignant")
+    public EnseignantDTO updateEnseignant(@RequestBody EnseignantDTO Enseigant){return service.updateEnseignant(Enseigant);}
 
-    @PutMapping("/update/user")
-    public User updateUser(@RequestBody User user){return service.updateUser(user);}
-
-   // @PutMapping("/update/etudiant")
-    //public Etudiant updateEtudiant(@RequestBody Etudiant etudiant){return etudiantService.updateEtudiant(etudiant);}
+    @PutMapping("/update/etudiant")
+    public EtudiantDTO updateEtudiant(@RequestBody EtudiantDTO etudiant){return service.updateEtudiant(etudiant);}
  /*   @PutMapping("/update/admin")
     public UserAdminDTO updateAdmin(@RequestBody UserAdminDTO userAdminDTO){return service.updateAdmin(userAdminDTO);}
 */
 
     @GetMapping("/allEnseignants")
-    public List<UserEnseigantDTO> getAllEnseignants() {
-        return service.getAllEnseignants();
+    public List<EnseignantDTO> getAllEnseignants() {
+        return service.findAllEnseignant();
     }
 
-    @GetMapping("/Enseignantbyemail/{email}")
+    /*@GetMapping("/Enseignantbyemail/{email}")
     public ResponseEntity<UserEnseigantDTO> getEnseignantByEmail(@PathVariable String email) {
         UserEnseigantDTO enseignantDTO = service.getEnseignantByEmail(email);
         if (enseignantDTO != null) {
@@ -93,10 +91,10 @@ public class AdminController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
+    }*/
     @GetMapping("/numProf/{numProf}")
-    public ResponseEntity<UserEnseigantDTO> getEnseignantByNumProf(@PathVariable int numProf) {
-        UserEnseigantDTO enseignantDTO = service.getEnseignantByNumProf(numProf);
+    public ResponseEntity<EnseignantDTO> getEnseignantByNumProf(@PathVariable int numProf) {
+        EnseignantDTO enseignantDTO = service.findByNumProf(numProf);
         if (enseignantDTO != null) {
             return ResponseEntity.ok(enseignantDTO);
         } else {
@@ -104,92 +102,25 @@ public class AdminController {
         }
     }
 
-    ////Archive /////
 
-    @GetMapping("/allArchiveUsers")
-    public List<ArchiveUsers> getAllArchiveUsers() {
-        return service.getAllArchiveUsers();
+    @GetMapping("/getEtudiantByInscrit/{numInscri}")
+    public ResponseEntity<EtudiantDTO> getEtudiantByInscri(@PathVariable double numInscri) {
+        EtudiantDTO userEtudiantDTO = service.findByNumInscri(numInscri);
+        if (userEtudiantDTO != null) {
+            return ResponseEntity.ok(userEtudiantDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    ////Etudiants /////
+    @GetMapping("/allEtudiant")
+    public List<EtudiantDTO> getAllEtudiants() {
+        return service.findAllEtudiant();
 
-    @GetMapping("/allEtudiants")
-    public List<Etudiant> getAllEtudiant() {
-        return etudiantService.getAllEtudiant();
     }
-    @GetMapping("/EtudiantsBynuminscrit/{numinscrit}")
-    public Etudiant getEtudiantByNumInscrit(@PathVariable int numinscrit) {
-        return etudiantService.getEtudiantByNumInscrit(numinscrit);
+    @GetMapping("/getEtudiantByGroupe/{idGroupe}")
+    public List<EtudiantDTO> getEtudiantsByGroupe(@PathVariable int idGroupe) {
+        return service.findByIdGroupe(idGroupe);
     }
-
-
-
-    /////Actualitees/////
-
-    @GetMapping("/Actualitees/allActualitees")
-    public List<Actualitees> getAllNews() {
-        return actualiteesService.getAllNews();
-    }
-
-    @GetMapping("/Actualitees/{id}")
-    public Actualitees getNewsById(@PathVariable Long id) {
-        return actualiteesService.getNewsById(id);
-    }
-
-    @PostMapping("/Actualitees/AddActualitees")
-    public String createNews(@RequestBody Actualitees news) {
-        return actualiteesService.createOrUpdateNews(news);
-    }
-
-    @PutMapping("/Actualitees/UpdateActualitees/{id}")
-    public String updateNews(@PathVariable Long id, @RequestBody Actualitees news) {
-        news.setId(id);
-        return actualiteesService.createOrUpdateNews(news);
-    }
-
-    @DeleteMapping("/delete/Actualitees/{id}")
-    public void deleteNews(@PathVariable Long id) {
-        actualiteesService.deleteNews(id);
-    }
-
-
-    /////Matiere ////
-
-    @GetMapping("/Matiere/allMatieres")
-    public List<Matiere> getallMatieres() {
-        return matiereService.getAllMatiere();
-    }
-    @GetMapping("/Matiere/{id}")
-    public Optional<Matiere> getMatiereById(@PathVariable int id) {
-        return matiereService.getMatiereById(id);
-    }
-    @GetMapping("/Matiere/{lib}")
-    public Optional<Matiere> getMatiereById(@PathVariable String lib) {
-        return matiereService.getMatiereBylib(lib);
-    }
-   /* @GetMapping("/Matiere/{idens}")
-    public Optional<List<Matiere>> getMatiereByIdEns(@PathVariable int idens) {
-        return matiereService.getMatiereByEns(idens);
-    }*/
-    @PostMapping("/Matiere/addMatiere")
-    public String createMatiere(@RequestBody Matiere mat) {
-        return matiereService.addMatiere(mat);
-    }
-
-    @PutMapping("/Matiere/UpdateMatiere/{id}")
-    public String updateMatiere(@PathVariable int id, @RequestBody Matiere mat) {
-        mat.setId(id);
-        return matiereService.addMatiere(mat);
-    }
-
-    @DeleteMapping("/delete/Matiere/{id}")
-    public void deleteMatiereid(@PathVariable int id) {
-        matiereService.deleteMatiere(id);
-    }
-    @DeleteMapping("/delete/Matiere/{lib}")
-    public void deleteMatiereLib(@PathVariable String lib) {
-        matiereService.deleteMatiereByLib(lib);
-    }
-
 
 }

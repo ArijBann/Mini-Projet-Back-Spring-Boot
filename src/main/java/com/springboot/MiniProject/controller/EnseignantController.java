@@ -1,5 +1,7 @@
 package com.springboot.MiniProject.controller;
 
+import com.springboot.MiniProject.dto.EnseignantDTO;
+import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.UserService;
@@ -28,6 +30,9 @@ public class EnseignantController {
     public String welcomeEns() {
         return "Welcome ens";
     }
-
+    @PutMapping("/update/NumTel")
+    public EnseignantDTO updateEnseignantInfo(@RequestBody EnseignantDTO enseignantDTO){
+        return enseignantService.updateEtudiantInfo(enseignantDTO);
+    }
 
 }

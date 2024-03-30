@@ -51,7 +51,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.
                 csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
+               /* .authorizeHttpRequests(
                         (authorize) -> authorize
                                 .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/admin/add/enseignant",
                                         "/issatso/admin/add/etudiant", "/issatso/admin/add/admin","/issatso/admin/delete/**",
@@ -59,17 +59,17 @@ public class SecurityConfig {
                                         "/issatso/authentificat","/issatso/refreshToken","/issatso/admin/allArchiveUsers",
                                         "/issatso/admin/EtudiantsBynuminscrit/{numinscrit}","/issatso/admin/allEtudiants",
                                         "/issatso/admin/Actualitees/**","/issatso/admin/Matiere/**").permitAll()
-                                //.requestMatchers("/issatso/welcome","/issatso/new","/issatso/user/enseignant","/issatso/user/etudiant","/issatso/user/admin").permitAll()
                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
-                )
+                )*/
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults())
-                .formLogin(login -> login
-                        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
-                ).build();
+                //.httpBasic(withDefaults())
+                //.formLogin(login -> login
+                //        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
+                //)
+                .build();
     }
 
     @Bean
