@@ -1,6 +1,7 @@
 package com.springboot.MiniProject.serivce;
 
 
+import com.springboot.MiniProject.Request.ChangePasswordRequest;
 import com.springboot.MiniProject.controller.EtudiantController;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
@@ -9,9 +10,11 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -286,4 +289,20 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
         return enseignantDTOExists;
     }
 
+    public void changePassword (ChangePasswordRequest request, Principal connectedUser){
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        //check if the current password is correct
+        if (!passwordEncoder.matches(request.getCurrentPassword(),user.getPassword())){
+            throw new IllegalStateException("Wrong Password !!");
+        }
+        //check if the 2 new passwords are the same
+        if (!request.getNewPassword().equals(request.getConfirmationPassword())){
+            throw new IllegalStateException("Passwords are not the same !!");
+        }
+        //update
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        //save the user
+        userRepository.save(user);
+    }
 }
