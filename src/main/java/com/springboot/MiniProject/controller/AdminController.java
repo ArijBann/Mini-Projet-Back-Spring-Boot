@@ -51,17 +51,19 @@ public class AdminController {
         return service.addAdmin(userAdminDTO);
     }
 
-    @DeleteMapping("/delete/enseignant/{id}")
-    public String deleteEnsegnant(@PathVariable int id){
-        return service.deleteEns(id);
+    @DeleteMapping("/delete/enseignant/{numProf}/{desc}")
+    public String deleteEnsegnant(@PathVariable int numProf,@PathVariable String desc){
+        return service.deleteEns(numProf,desc);
     }
-    @DeleteMapping("/delete/etudiant/{id}")
-    public String deleteEtudiant(@PathVariable int id){
-        return service.deleteEtud(id);
+
+    @DeleteMapping("/delete/etudiant/{numinscri}/{desc}")
+    public String deleteEtudiant(@PathVariable int numinscri,@PathVariable String desc){
+        return service.deleteEtud(numinscri,desc);
     }
-    @DeleteMapping("/delete/admin/{id}")
-    public String deleteAdmin(@PathVariable int id){
-        return service.deleteAdmin(id);
+
+    @DeleteMapping("/delete/admin/{id}/{desc}")
+    public String deleteAdmin(@PathVariable int id,@PathVariable String desc){
+        return service.deleteAdmin(id,desc);
     }
     @PutMapping("/update/enseignant")
     public EnseignantDTO updateEnseignant(@RequestBody EnseignantDTO Enseigant){return service.updateEnseignant(Enseigant);}
