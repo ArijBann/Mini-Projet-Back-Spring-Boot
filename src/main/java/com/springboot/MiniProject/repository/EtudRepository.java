@@ -1,5 +1,6 @@
 package com.springboot.MiniProject.repository;
 
+import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.Groupe;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,6 @@ import java.util.Optional;
 @Repository
 public interface EtudRepository extends JpaRepository<Etudiant,Integer> {
     Etudiant findEtudiantByNumInscri(double numInscrit);
-    List <Etudiant> findEtudiantByGroupe(Optional<Groupe> groupe);
+
+    List <Etudiant> findByGroupeId(int idGroupe);
 }

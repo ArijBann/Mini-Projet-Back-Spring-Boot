@@ -1,9 +1,8 @@
 package com.springboot.MiniProject.serivce;
 
 
-import com.springboot.MiniProject.dto.UserAdminDTO;
-import com.springboot.MiniProject.dto.UserEnseigantDTO;
-import com.springboot.MiniProject.dto.UserEtudiantDTO;
+import com.springboot.MiniProject.controller.EtudiantController;
+import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
 import jakarta.mail.MessagingException;
@@ -13,6 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements  EtudiantInterface ,EnseignantInterface{
 
 
     @Autowired
@@ -35,8 +35,9 @@ public class UserService {
     private AdminRepository adminRepository;
     @Autowired
     private EmailSenderService emailSenderService;
-@Autowired
-private GroupeService groupeService;
+    @Autowired
+    private GroupeRepository groupeRepository;
+
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();
@@ -113,45 +114,28 @@ private GroupeService groupeService;
     }
 
     public String deleteEns (int id){
-        Optional<User> myUserEns = userRepository.findUserByEnseignantId((id));
-         userRepository.deleteById(myUserEns.get().getId());
-         enseignantRepository.deleteById(id);
+        User myUserEns = userRepository.findUserByEnseignantId((id));
+        userRepository.deleteById(myUserEns.getId());
+        enseignantRepository.deleteById(id);
         return "Enseignant Deleted Successfully !";
     }
 
     public String deleteEtud (int id){
-        Optional<User> myUserEns = userRepository.findUserByEtudiantId((id));
-        userRepository.deleteById(myUserEns.get().getId());
+        User myUserEns = userRepository.findUserByEtudiantId((id));
+        userRepository.deleteById(myUserEns.getId());
         etudiantRepository.deleteById(id);
         return "Etudiant Deleted Successfully !";
     }
 
     public String deleteAdmin (int id){
-        Optional<User> myUserEns = userRepository.findUserByAdminId((id));
-        userRepository.deleteById(myUserEns.get().getId());
+        User myUserEns = userRepository.findUserByAdminId((id));
+        userRepository.deleteById(myUserEns.getId());
         adminRepository.deleteById(id);
         return "Admin Deleted Successfully !";
     }
-    public User updateUser(User user){
-        User existingEUser = userRepository.findById(user.getId()).orElse(null);
-        existingEUser.setPassword(user.getPassword());
-        existingEUser.setCIN(user.getCIN());
-        existingEUser.setDate_nais(user.getDate_nais());
-        existingEUser.setEmail(user.getEmail());
-        existingEUser.setNom(user.getNom());
-        existingEUser.setPrenom(user.getPrenom());
-        existingEUser.setNumtel(user.getNumtel());
-        return userRepository.save(existingEUser);
-    }
 
-    public List<UserEnseigantDTO> getAllEnseignants() {
-        List<Enseignant> enseignants = enseignantRepository.findAll();
-        return enseignants.stream()
-                .map(enseignant -> new UserEnseigantDTO(userRepository.findUserByEnseignantId(enseignant.getId()).orElse(null), enseignant))
-                .collect(Collectors.toList());
-    }
 
-    public UserEnseigantDTO getEnseignantByEmail(String email) {
+   /* public UserEnseigantDTO getEnseignantByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent() && user.get().getEnseignant() != null) {
             Enseignant enseignant = user.get().getEnseignant();
@@ -159,32 +143,147 @@ private GroupeService groupeService;
         } else {
             return null;
         }
+    }*/
+
+
+
+
+    @Override
+    public EtudiantDTO findByNumInscri(double numInscri) {
+        Etudiant etudiant = etudiantRepository.findEtudiantByNumInscri(numInscri);
+        User user=userRepository.findUserByEtudiantId(etudiant.getId());
+        EtudiantDTO etudiantDTO = getEtudiantDTO(etudiant, user);
+        return etudiantDTO;
+    }
+    @Override
+    public List<EtudiantDTO> findByIdGroupe(int idGroupe) {
+        List<Etudiant> etudiants = etudiantRepository.findByGroupeId(idGroupe);
+        List<EtudiantDTO> etudiantDTOs = new ArrayList<>();
+
+        for (Etudiant etudiant : etudiants) {
+            // Assuming that User information is available in the Etudiant entity
+            User user=userRepository.findUserByEtudiantId(etudiant.getId());
+            if (user!=null) {
+                EtudiantDTO etudiantDTO = getEtudiantDTO(etudiant, user);
+                // Add the DTO to the list
+                etudiantDTOs.add(etudiantDTO);
+            }
+        }
+        return etudiantDTOs;
     }
 
-    public UserEnseigantDTO getEnseignantByNumProf(int numProf) {
-        Optional<Enseignant> user = enseignantRepository.findByNumProf(numProf);
-        if (user != null) {
-            return new UserEnseigantDTO(userRepository.findUserByEnseignantId(user.get().getId()).orElse(null), user.get());
-        } else {
-            return null;
+    @Override
+    public List<EtudiantDTO> findAllEtudiant() {
+        List <Etudiant> etudiants = etudiantRepository.findAll();
+        List<EtudiantDTO> etudiantDTOs = new ArrayList<>();
+        for (Etudiant etudiant : etudiants) {
+            // Assuming that User information is available in the Etudiant entity
+            User user=userRepository.findUserByEtudiantId(etudiant.getId());
+            if (user!=null) {
+                EtudiantDTO etudiantDTO = getEtudiantDTO(etudiant, user);
+                // Add the DTO to the list
+                etudiantDTOs.add(etudiantDTO);
+            }
         }
+        return etudiantDTOs;
     }
-    public List<UserEtudiantDTO> getAllEtudiants() {
-        List<Etudiant> etudiants = etudiantRepository.findAll();
-        return etudiants.stream()
-                .map(etudiant -> new UserEtudiantDTO(userRepository.findUserByEtudiantId(etudiant.getId()).orElse(null), etudiant))
-                .collect(Collectors.toList());
-    }
-        public UserEtudiantDTO getEtudiantByNumInscri(double numInscri) {
-        Etudiant user = etudiantRepository.findEtudiantByNumInscri(numInscri);
-        if (user != null) {
-            return new UserEtudiantDTO(userRepository.findUserByEtudiantId(user.getId()).orElse(null), user);
-        } else {
-            return null;
+
+
+    @Override
+    public List<EnseignantDTO> findAllEnseignant() {
+        List <Enseignant> enseignants = enseignantRepository.findAll();
+        List<EnseignantDTO> enseignantsDTO = new ArrayList<>();
+        for (Enseignant enseignant : enseignants) {
+            // Assuming that User information is available in the Etudiant entity
+            User user=userRepository.findUserByEnseignantId(enseignant.getId());
+            if (user!=null) {
+                EnseignantDTO enseignantDTO = getEnsignantDTO(enseignant, user);
+                // Add the DTO to the list
+                enseignantsDTO.add(enseignantDTO);
+            }
         }
+        return enseignantsDTO;
     }
-    public List<Etudiant> getEtudiantByGroupe(int idGroupe) {
-        Optional<Groupe> groupeExist = groupeService.getGroupeById(idGroupe);
-        return etudiantRepository.findEtudiantByGroupe(groupeExist);
+    private static EtudiantDTO getEtudiantDTO(Etudiant etudiant, User user) {
+        EtudiantDTO etudiantDTO = new EtudiantDTO();
+        etudiantDTO.setIdEtudiant(etudiant.getId());
+        etudiantDTO.setNum_inscri(etudiant.getNumInscri());
+        etudiantDTO.setIdGroupe(etudiant.getGroupe().getId());
+        etudiantDTO.setCIN(user.getCIN());
+        etudiantDTO.setNom(user.getNom());
+        etudiantDTO.setPrenom(user.getPrenom());
+        etudiantDTO.setEmail(user.getEmail());
+        etudiantDTO.setNumtel(user.getNumtel());
+        etudiantDTO.setPassword(user.getPassword());
+        etudiantDTO.setDate_nais(user.getDate_nais());
+        return etudiantDTO;
     }
+
+
+
+
+    @Override
+    public EnseignantDTO findByNumProf(int numProf) {
+        Enseignant etudiant = enseignantRepository.findByNumProf(numProf);
+        User user=userRepository.findUserByEnseignantId(etudiant.getId());
+        EnseignantDTO etudiantDTO = getEnsignantDTO(etudiant, user);
+        return etudiantDTO;
+    }
+
+
+
+    private static EnseignantDTO getEnsignantDTO(Enseignant etudiant, User user) {
+        EnseignantDTO etudiantDTO = new EnseignantDTO();
+        etudiantDTO.setIdEnseignant(etudiant.getId());
+        etudiantDTO.setNum_prof(etudiant.getNumProf());
+        etudiantDTO.setDiplome(etudiant.getDiplome());
+        etudiantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
+        etudiantDTO.setCIN(user.getCIN());
+        etudiantDTO.setNom(user.getNom());
+        etudiantDTO.setPrenom(user.getPrenom());
+        etudiantDTO.setEmail(user.getEmail());
+        etudiantDTO.setNumtel(user.getNumtel());
+        etudiantDTO.setDate_nais(user.getDate_nais());
+        etudiantDTO.setPassword(user.getPassword());
+        return etudiantDTO;
+    }
+
+
+    @Override
+    public EnseignantDTO updateEnseignant(EnseignantDTO enseignant) {
+        Enseignant enseignantExist = enseignantRepository.findByNumProf(enseignant.getNum_prof());
+        User userExist = userRepository.findUserByEnseignantId(enseignantExist.getId());
+        List <Groupe> groupes = groupeRepository.findAllById(enseignant.getIdGroupes());
+        enseignantExist.setGroupes(groupes);
+        enseignantExist.setDiplome(enseignant.getDiplome());
+        userExist.setNom(enseignant.getNom());
+        userExist.setEmail(enseignant.getEmail());
+        userExist.setPrenom(enseignant.getPrenom());
+        userExist.setNumtel(enseignant.getNumtel());
+        userExist.setCIN(enseignant.getCIN());
+        userExist.setDate_nais(enseignant.getDate_nais());
+        userExist.setPassword(passwordEncoder.encode(enseignant.getPassword()));
+        userRepository.save(userExist);
+        enseignantRepository.save(enseignantExist);
+        EnseignantDTO enseignantDTOExists = getEnsignantDTO(enseignantExist, userExist);
+        return enseignantDTOExists;
+    }
+    public EtudiantDTO updateEtudiant(EtudiantDTO etudiantDTO) {
+        Etudiant etudiantExist = etudiantRepository.findEtudiantByNumInscri(etudiantDTO.getNum_inscri());
+        User userExist = userRepository.findUserByEtudiantId(etudiantExist.getId());
+        Optional<Groupe> groupe =groupeRepository.findById(etudiantExist.getId());
+        etudiantExist.setGroupe(groupe.get());
+        userExist.setNom(etudiantDTO.getNom());
+        userExist.setEmail(etudiantDTO.getEmail());
+        userExist.setPrenom(etudiantDTO.getPrenom());
+        userExist.setNumtel(etudiantDTO.getNumtel());
+        userExist.setCIN(etudiantDTO.getCIN());
+        userExist.setDate_nais(etudiantDTO.getDate_nais());
+        userExist.setPassword(passwordEncoder.encode(etudiantDTO.getPassword()));
+        userRepository.save(userExist);
+        etudiantRepository.save(etudiantExist);
+        EtudiantDTO enseignantDTOExists = getEtudiantDTO(etudiantExist, userExist);
+        return enseignantDTOExists;
+    }
+
 }

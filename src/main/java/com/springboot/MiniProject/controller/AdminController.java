@@ -1,10 +1,8 @@
 package com.springboot.MiniProject.controller;
 
 
-import com.springboot.MiniProject.dto.UserAdminDTO;
-import com.springboot.MiniProject.dto.UserEnseigantDTO;
-import com.springboot.MiniProject.dto.UserEtudiantDTO;
-import com.springboot.MiniProject.entity.Etudiant;
+import com.springboot.MiniProject.dto.*;
+import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.EtudiantService;
@@ -17,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/issatso/admin")
@@ -66,24 +63,21 @@ public class AdminController {
     public String deleteAdmin(@PathVariable int id){
         return service.deleteAdmin(id);
     }
-   // @PutMapping("/update/enseignant")
-    //public Enseignant updateEnseignant(@RequestBody Enseignant Enseigant){return enseignantService.updateEnseignant(Enseigant);}
+    @PutMapping("/update/enseignant")
+    public EnseignantDTO updateEnseignant(@RequestBody EnseignantDTO Enseigant){return service.updateEnseignant(Enseigant);}
 
-    @PutMapping("/update/user")
-    public User updateUser(@RequestBody User user){return service.updateUser(user);}
-
-   // @PutMapping("/update/etudiant")
-    //public Etudiant updateEtudiant(@RequestBody Etudiant etudiant){return etudiantService.updateEtudiant(etudiant);}
+    @PutMapping("/update/etudiant")
+    public EtudiantDTO updateEtudiant(@RequestBody EtudiantDTO etudiant){return service.updateEtudiant(etudiant);}
  /*   @PutMapping("/update/admin")
     public UserAdminDTO updateAdmin(@RequestBody UserAdminDTO userAdminDTO){return service.updateAdmin(userAdminDTO);}
 */
 
     @GetMapping("/allEnseignants")
-    public List<UserEnseigantDTO> getAllEnseignants() {
-        return service.getAllEnseignants();
+    public List<EnseignantDTO> getAllEnseignants() {
+        return service.findAllEnseignant();
     }
 
-    @GetMapping("/Enseignantbyemail/{email}")
+    /*@GetMapping("/Enseignantbyemail/{email}")
     public ResponseEntity<UserEnseigantDTO> getEnseignantByEmail(@PathVariable String email) {
         UserEnseigantDTO enseignantDTO = service.getEnseignantByEmail(email);
         if (enseignantDTO != null) {
@@ -91,10 +85,10 @@ public class AdminController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
+    }*/
     @GetMapping("/numProf/{numProf}")
-    public ResponseEntity<UserEnseigantDTO> getEnseignantByNumProf(@PathVariable int numProf) {
-        UserEnseigantDTO enseignantDTO = service.getEnseignantByNumProf(numProf);
+    public ResponseEntity<EnseignantDTO> getEnseignantByNumProf(@PathVariable int numProf) {
+        EnseignantDTO enseignantDTO = service.findByNumProf(numProf);
         if (enseignantDTO != null) {
             return ResponseEntity.ok(enseignantDTO);
         } else {
@@ -103,8 +97,8 @@ public class AdminController {
     }
 
     @GetMapping("/getEtudiantByInscrit/{numInscri}")
-    public ResponseEntity<UserEtudiantDTO>getEtudiantByInscri(@PathVariable double numInscri) {
-        UserEtudiantDTO userEtudiantDTO = service.getEtudiantByNumInscri(numInscri);
+    public ResponseEntity<EtudiantDTO> getEtudiantByInscri(@PathVariable double numInscri) {
+        EtudiantDTO userEtudiantDTO = service.findByNumInscri(numInscri);
         if (userEtudiantDTO != null) {
             return ResponseEntity.ok(userEtudiantDTO);
         } else {
@@ -113,11 +107,11 @@ public class AdminController {
     }
 
     @GetMapping("/allEtudiant")
-    public List<UserEtudiantDTO> getAllEtudiants() {
-        return service.getAllEtudiants();
+    public List<EtudiantDTO> getAllEtudiants() {
+        return service.findAllEtudiant();
     }
     @GetMapping("/getEtudiantByGroupe/{idGroupe}")
-    public List<Etudiant> getEtudiantsByGroupe(@PathVariable int idGroupe) {
-        return service.getEtudiantByGroupe(idGroupe);
+    public List<EtudiantDTO> getEtudiantsByGroupe(@PathVariable int idGroupe) {
+        return service.findByIdGroupe(idGroupe);
     }
 }

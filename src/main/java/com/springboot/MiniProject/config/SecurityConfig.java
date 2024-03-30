@@ -51,14 +51,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.
                 csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
+               /* .authorizeHttpRequests(
                         (authorize) -> authorize
                                 .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/admin/add/enseignant", "/issatso/admin/add/etudiant", "/issatso/admin/add/admin","/issatso/admin/delete/**",
                                         "/issatso/admin/allEnseignants","/issatso/admin/numProf/{numProf}","/issatso/admin/Enseignantbyemail/{email}","/issatso/authentificat","/issatso/refreshToken").permitAll()
                                 //.requestMatchers("/issatso/welcome","/issatso/new","/issatso/user/enseignant","/issatso/user/etudiant","/issatso/user/admin").permitAll()
                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
-                )
+                )*/
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
