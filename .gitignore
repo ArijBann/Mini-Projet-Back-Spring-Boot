@@ -6,7 +6,7 @@ target/
 
 
 #FILES TO IGNORE WHILE PUSHING
-SecurityConfig
+SecurityConfig.java
 application.properties
 
 
