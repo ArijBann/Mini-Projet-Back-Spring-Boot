@@ -99,11 +99,7 @@ public class UserController {
                 }).orElseThrow(() -> new RuntimeException(
                         "Refresh token is not in database!"));
     }
-@PatchMapping("/changePassword")
-    public ResponseEntity<?> changePassword (
-        @RequestBody ChangePasswordRequest request,
-        Principal connectedUser){
-    service.changePassword(request,connectedUser);
-    return ResponseEntity.ok().build();
-    }
+
+
 }
+

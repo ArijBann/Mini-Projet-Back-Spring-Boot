@@ -53,17 +53,23 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable)
                /* .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/user/enseignant", "/issatso/user/etudiant", "/issatso/user/admin", "/issatso/authentificat").permitAll()
-                                .requestMatchers("/issatso/**").authenticated()
+                                .requestMatchers("/issatso/welcome", "/issatso/new", "/issatso/admin/add/enseignant",
+                                        "/issatso/admin/add/etudiant", "/issatso/admin/add/admin","/issatso/admin/delete/**",
+                                        "/issatso/admin/allEnseignants","/issatso/admin/numProf/{numProf}","/issatso/admin/Enseignantbyemail/{email}",
+                                        "/issatso/authentificat","/issatso/refreshToken","/issatso/admin/allArchiveUsers",
+                                        "/issatso/admin/EtudiantsBynuminscrit/{numinscrit}","/issatso/admin/allEtudiants",
+                                        "/issatso/admin/Actualitees/**","/issatso/admin/Matiere/**").permitAll()
+                               .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
                 )*/
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults())
-                .formLogin(login -> login
-                        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
-                ).build();
+                //.httpBasic(withDefaults())
+                //.formLogin(login -> login
+                //        .defaultSuccessUrl("/issatso/welcome", true) // Setting default success URL
+                //)
+                .build();
     }
 
     @Bean

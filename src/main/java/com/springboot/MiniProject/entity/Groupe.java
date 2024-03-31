@@ -25,5 +25,7 @@ public class Groupe {
     private List <Enseignant> enseignants ;
    /* @OneToMany(fetch = FetchType.LAZY, mappedBy = "groupe", cascade = CascadeType.MERGE)
     private List<Etudiant> etudiantList;*/
+   @ManyToMany(mappedBy = "groupes")
+   private List<Matiere> matieres;
 
 }

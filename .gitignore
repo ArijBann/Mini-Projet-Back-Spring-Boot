@@ -4,6 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
+#FILES TO IGNORE WHILE PUSHING
+./SecurityConfig.java
+src/main/resources/application.properties
+
+
+
 ### STS ###
 .apt_generated
 .classpath

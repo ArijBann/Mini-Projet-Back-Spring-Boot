@@ -28,5 +28,8 @@ public class Enseignant {
             joinColumns = @JoinColumn(name = "ens_id"),
             inverseJoinColumns = @JoinColumn(name = "groupe_id"))
     private List<Groupe> groupes ;
+
+    @OneToMany(mappedBy = "enseignant")
+    private List<EnseignantMatiere> enseignantMatieres;
 }
 

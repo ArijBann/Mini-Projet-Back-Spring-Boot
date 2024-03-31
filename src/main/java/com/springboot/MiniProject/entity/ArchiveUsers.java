@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -12,11 +13,11 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "archiveUsers")
-public class ArchicheUsers {
+public class ArchiveUsers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Date date_suppression;
+    private LocalDateTime date_suppression;
     private String description ;
     private String nom;
     private String prenom;

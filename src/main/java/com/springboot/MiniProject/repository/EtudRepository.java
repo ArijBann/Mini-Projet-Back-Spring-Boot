@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface EtudRepository extends JpaRepository<Etudiant,Integer> {
+
     Etudiant findEtudiantByNumInscri(double numInscrit);
 
     List <Etudiant> findByGroupeId(int idGroupe);
