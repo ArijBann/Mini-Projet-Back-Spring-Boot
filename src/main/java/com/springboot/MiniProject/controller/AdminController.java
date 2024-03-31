@@ -3,7 +3,7 @@ package com.springboot.MiniProject.controller;
 
 
 import com.springboot.MiniProject.dto.*;
-import com.springboot.MiniProject.entity.ArchiveUsers;
+import com.springboot.MiniProject.entity.Actualitees;
 import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.*;
@@ -31,9 +31,7 @@ public class AdminController {
     private EtudiantService etudiantService;
 
     @Autowired
-    private ActualiteesService actualiteesService ;
-    @Autowired
-    private MatiereService matiereService ;
+    private ActualiteesService actualiteesService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -64,7 +62,31 @@ public class AdminController {
     public String deleteEtudiant(@PathVariable int numinscri,@PathVariable String desc){
         return service.deleteEtud(numinscri,desc);
     }
+    @GetMapping("/Actualitees/allActualitees")
+    public List<Actualitees> getAllNews() {
+        return actualiteesService.getAllNews();
+    }
 
+    @GetMapping("/Actualitees/{id}")
+    public Actualitees getNewsById(@PathVariable Long id) {
+        return actualiteesService.getNewsById(id);
+    }
+
+    @PostMapping("/Actualitees/AddActualitees")
+    public String createNews(@RequestBody Actualitees news) {
+        return actualiteesService.createOrUpdateNews(news);
+    }
+
+    @PutMapping("/Actualitees/UpdateActualitees/{id}")
+    public String updateNews(@PathVariable Long id, @RequestBody Actualitees news) {
+        news.setId(id);
+        return actualiteesService.createOrUpdateNews(news);
+    }
+
+    @DeleteMapping("/delete/Actualitees/{id}")
+    public void deleteNews(@PathVariable Long id) {
+        actualiteesService.deleteNews(id);
+    }
     @DeleteMapping("/delete/admin/{id}/{desc}")
     public String deleteAdmin(@PathVariable int id,@PathVariable String desc){
         return service.deleteAdmin(id,desc);
