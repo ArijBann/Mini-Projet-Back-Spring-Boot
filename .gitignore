@@ -6,8 +6,8 @@ target/
 
 
 #FILES TO IGNORE WHILE PUSHING
-SecurityConfig.java
-application.properties
+./SecurityConfig.java
+./application.properties
 
 
 ### STS ###
