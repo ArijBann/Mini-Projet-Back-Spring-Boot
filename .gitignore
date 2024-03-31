@@ -3,8 +3,13 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+
+#FILES TO IGNORE WHILE PUSHING
 SecurityConfig.java
 application.properties
+
+
 ### STS ###
 .apt_generated
 .classpath
