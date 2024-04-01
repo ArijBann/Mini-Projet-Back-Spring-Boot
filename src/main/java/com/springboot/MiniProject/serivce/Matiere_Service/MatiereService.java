@@ -1,14 +1,13 @@
 package com.springboot.MiniProject.serivce.Matiere_Service;
 
 import com.springboot.MiniProject.dto.EnseignantDTO;
+import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
-import com.springboot.MiniProject.entity.Enseignant;
-import com.springboot.MiniProject.entity.Groupe;
-import com.springboot.MiniProject.entity.Matiere;
-import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,14 +32,6 @@ public class MatiereService implements MatiereInterface{
             return "Matiere added to the system";
         }
     }
-
-    /*public Matiere updateMatiere(Matiere mat){
-        Matiere ExistingMatiere =matiereRepository
-                .findById(mat.getId()).orElse(null);
-        ExistingMatiere.setLibelleMatiere(mat.getLibelleMatiere());
-        ExistingMatiere.setCoefMat(mat.getCoefMat());
-        return matiereRepository.save(mat);
-    }*/
     public String deleteMatiere(int id){
         matiereRepository.deleteById(id);
         return "Matiere Deleted Successfully !";
@@ -50,8 +41,17 @@ public class MatiereService implements MatiereInterface{
         matiereRepository.deleteById(mat.get().getId());
         return "Enseignant Deleted Successfully !";
     }
-    public List<Matiere> getAllMatiere() {
-        return  matiereRepository.findAll();
+    @Override
+    public List<MatiereDTO> getAllMatiere() {
+        List <Matiere> matieres =matiereRepository.findAll();
+        List<MatiereDTO> matiereDTOS = new ArrayList<>();
+        for (Matiere matiere : matieres) {
+                MatiereDTO matiereDTO = getMatiereDTO(matiere);
+                // Add the DTO to the list
+            matiereDTOS.add(matiereDTO);
+
+        }
+        return matiereDTOS;
     }
    /* public Optional<List<Matiere>> getMatiereByEns(int id) {
         return  matiereRepository.findByEnseignantId(id);

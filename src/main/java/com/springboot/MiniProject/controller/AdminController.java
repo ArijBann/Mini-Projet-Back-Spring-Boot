@@ -150,18 +150,18 @@ public class AdminController {
         return matiereService.updateMatiere(matiere);
     }
 
-    @DeleteMapping("/delete-Matiere/{id}")
+    @DeleteMapping("/delete-Matiere/{idMatiere}")
     public String deleteMatiereById (@PathVariable int idMatiere){
         return matiereService.deleteMatiere(idMatiere);
     }
 
-    @DeleteMapping("/delete-matiere/{lib}")
+    @DeleteMapping("/delete-matiere/{libMatiere}")
     public String deleteMatiereByLib(@PathVariable String libMatiere){
         return matiereService.deleteMatiereByLib(libMatiere);
     }
 
     @GetMapping("/getAll-Matiere")
-    public List<Matiere> getAllMatiere(){
+    public List<MatiereDTO> getAllMatiere(){
         return matiereService.getAllMatiere();
     }
     @GetMapping("/get-Matiere/{lib}")
