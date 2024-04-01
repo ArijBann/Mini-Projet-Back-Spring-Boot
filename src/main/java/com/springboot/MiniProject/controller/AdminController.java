@@ -3,17 +3,18 @@ package com.springboot.MiniProject.controller;
 
 
 import com.springboot.MiniProject.dto.*;
+import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.Actualitees;
-import com.springboot.MiniProject.entity.Enseignant;
-import com.springboot.MiniProject.entity.User;
+import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
+import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/issatso/admin")
@@ -22,14 +23,7 @@ public class AdminController {
     @Autowired
     private UserService service;
     @Autowired
-    private EnseignantService enseignantService;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private EtudiantService etudiantService;
-
+    private MatiereService matiereService;
     @Autowired
     private ActualiteesService actualiteesService;
 
@@ -145,4 +139,38 @@ public class AdminController {
         return service.findByIdGroupe(idGroupe);
     }
 
+    ///////// Matiere ////////////////
+    @PostMapping ("/add-Matiere")
+    public String addMatiere (@RequestBody Matiere matiere){
+        return matiereService.addMatiere(matiere);
+    }
+
+    @PutMapping("/update-Matiere")
+    public MatiereDTO updateMatiere(@RequestBody MatiereDTO matiere){
+        return matiereService.updateMatiere(matiere);
+    }
+
+    @DeleteMapping("/delete-Matiere/{id}")
+    public String deleteMatiereById (@PathVariable int idMatiere){
+        return matiereService.deleteMatiere(idMatiere);
+    }
+
+    @DeleteMapping("/delete-matiere/{lib}")
+    public String deleteMatiereByLib(@PathVariable String libMatiere){
+        return matiereService.deleteMatiereByLib(libMatiere);
+    }
+
+    @GetMapping("/getAll-Matiere")
+    public List<Matiere> getAllMatiere(){
+        return matiereService.getAllMatiere();
+    }
+    @GetMapping("/get-Matiere/{lib}")
+        public Optional <Matiere> getMatiereByLib(@PathVariable String lib){
+            return matiereService.getMatiereBylib(lib);
+    }
+
+    @GetMapping("/get-Matiere/{id}")
+    public Optional<Matiere> getMatiereById(int id ){
+        return matiereService.getMatiereById(id);
+    }
 }
