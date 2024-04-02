@@ -9,6 +9,7 @@ import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
 import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,8 @@ public class AdminController {
     private MatiereService matiereService;
     @Autowired
     private ActualiteesService actualiteesService;
+    @Autowired
+    private DemandeService demandeService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -173,4 +176,33 @@ public class AdminController {
     public Optional<Matiere> getMatiereById(int id ){
         return matiereService.getMatiereById(id);
     }
+
+
+    /////// Demande /////////
+
+    @GetMapping("/Demande/getAallDemande")
+    public ResponseEntity<List<DemandeDTO>> getAllDemandes() {
+        List<DemandeDTO> demandes = demandeService.getAllDemandes();
+        return new ResponseEntity<>(demandes, HttpStatus.OK);
+    }
+
+    @GetMapping("/Demande/getDemandeById/{id}")
+    public ResponseEntity<DemandeDTO> getDemandeById(@PathVariable Long id) {
+        DemandeDTO demande = demandeService.getDemandeById(id);
+        return new ResponseEntity<>(demande, HttpStatus.OK);
+    }
+
+    @PutMapping("/Demande/updateDemandeStat/{id}/{stat}")
+    public ResponseEntity<DemandeDTO> updateDemandeTraiter(@PathVariable Long id, @PathVariable String stat) {
+        DemandeDTO updatedDemandeStat = demandeService.updateDemandeTraieter(id, stat);
+        return new ResponseEntity<>(updatedDemandeStat, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/Demande/DeleteDemande/{id}")
+    public ResponseEntity<Void> deleteDemande(@PathVariable Long id) {
+        demandeService.deleteDemande(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 }
