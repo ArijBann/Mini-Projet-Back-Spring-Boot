@@ -37,7 +37,7 @@ public class EtudiantController {
     }
 
     /////Demande ////
-    @GetMapping("/Demande/getAallMesDemande/{email}")
+    @GetMapping("/Demande/getAllMesDemande/{email}")
     public ResponseEntity<List<DemandeDTO>> getDemandeByUserEmail(@PathVariable String email ) {
         List<DemandeDTO> demandes = demandeService.getDemandeByUserEmail(email);
         return new ResponseEntity<>(demandes, HttpStatus.OK);

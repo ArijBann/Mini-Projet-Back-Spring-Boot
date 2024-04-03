@@ -40,7 +40,7 @@ public class EnseignantController {
     }
 
     /////Demande ////
-    @GetMapping("/Demande/getAallDemande")
+    @GetMapping("/Demande/getAllDemande")
     public ResponseEntity<List<DemandeDTO>> getAllDemandes() {
         List<DemandeDTO> demandes = demandeService.getAllDemandes();
         return new ResponseEntity<>(demandes, HttpStatus.OK);

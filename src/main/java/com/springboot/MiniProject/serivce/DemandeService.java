@@ -11,10 +11,8 @@ import com.springboot.MiniProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,17 +57,29 @@ public class DemandeService implements DemandeInterface {
         Demande existingDemande = demandeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Demande not found with id: " + id));
         // Update existing demande
+        LocalDate currentDate = LocalDate.now();
+        Date currentDateAsDate = java.sql.Date.valueOf(currentDate);
+        if (existingDemande.getStatut().equals("Nouvelle")){
+        existingDemande.setDateCreation(currentDateAsDate);
         existingDemande.setSujet(demandeDTO.getSujet());
         existingDemande.setDescription(demandeDTO.getDescription());
-        existingDemande.setStatut(demandeDTO.getStatut());
+        //existingDemande.setStatut(demandeDTO.getStatut());
         Demande updatedDemande = demandeRepository.save(existingDemande);
         return convertToDTO(updatedDemande);
+        } else{
+            Demande demnull = new Demande();
+            return convertToDTO(demnull);
+        }
     }
     public DemandeDTO updateDemandeTraieter(Long id ,String stat) {
         Demande existingDemande = demandeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Demande not found with id: " + id));
+        LocalDate currentDate = LocalDate.now();
+        Date currentDateAsDate = java.sql.Date.valueOf(currentDate);
         // Update existing demande
+        if (existingDemande.getStatut().equals("Nouvelle")){
         existingDemande.setStatut(stat);
+        existingDemande.setDateCreation(currentDateAsDate);}
         Demande updatedDemande = demandeRepository.save(existingDemande);
         return convertToDTO(updatedDemande);
     }
@@ -110,14 +120,28 @@ public class DemandeService implements DemandeInterface {
     @Override
     public List<DemandeDTO> getDemandeByUserEmail(String email) {
         List <Demande> demandes =demandeRepository.findAll();
+       // System.out.println(demandes);
         List<DemandeDTO> demandeDTOS = new ArrayList<>();
         for (Demande demande : demandes) {
-            if (demande.getUser().getEmail() == email){
+            /*if (email.equals(demande.getUser().getEmail())){
             DemandeDTO demandeDTO = convertToDTO(demande);
             // Add the DTO to the list
-            demandeDTOS.add(demandeDTO);}
+            demandeDTOS.add(demandeDTO);}*/
+            User user = demande.getUser();
+            if (user != null && email.equals(user.getEmail())) {
+                DemandeDTO demandeDTO = convertToDTO(demande);
+                demandeDTOS.add(demandeDTO);
+            }
         }
         return demandeDTOS;
+     /*   List <Demande> userDem = new ArrayList<>();
+        for (Demande demande : demandes) {
+            if (email.equals(demande.getUser().getEmail())){
+                userDem.add(demande)    ;
+            }
+        }
+        return userDem.stream().map(this::convertToDTO).collect(Collectors.toList());
+*/
     }
 
 
