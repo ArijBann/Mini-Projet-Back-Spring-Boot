@@ -19,7 +19,8 @@ public class Groupe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String niveau;
-    private String filière;
+    @Column(name = "filière")
+    private String filiere;
     private int numeroGroupe ;
     @ManyToMany(mappedBy = "groupes")
     private List <Enseignant> enseignants ;

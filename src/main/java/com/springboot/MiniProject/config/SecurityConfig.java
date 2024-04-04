@@ -57,9 +57,9 @@ public class SecurityConfig {
                                         "/issatso/admin/add/etudiant", "/issatso/admin/add/admin","/issatso/admin/delete/**",
                                         "/issatso/admin/allEnseignants","/issatso/admin/numProf/{numProf}","/issatso/admin/Enseignantbyemail/{email}",
                                         "/issatso/authentificat","/issatso/refreshToken","/issatso/admin/allArchiveUsers",
-                                        "/issatso/admin/EtudiantsBynuminscrit/{numinscrit}","/issatso/admin/allEtudiants",
+                                        "/issatso/admin/EtudiantsBynuminscrit/{numinscrit}","/issatso/admin/allEtudiant",
                                         "/issatso/admin/Actualitees/**","/issatso/admin/Matiere/**","/issatso/admin/Demande/**",
-                                        "/issatso/enseignant/Demande/**","/issatso/etudiant/Demande/**").permitAll()
+                                        "/issatso/enseignant/Demande/**","/issatso/etudiant/Demande/**","/issatso/admin/**").permitAll()
                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
                 )

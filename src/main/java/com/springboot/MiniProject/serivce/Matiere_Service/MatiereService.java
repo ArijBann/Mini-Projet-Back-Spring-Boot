@@ -4,6 +4,7 @@ import com.springboot.MiniProject.dto.EnseignantDTO;
 import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.exception.NotFoundException;
 import com.springboot.MiniProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -85,4 +86,34 @@ public class MatiereService implements MatiereInterface{
    /* public Optional<List<Matiere>> getMatiereBygrp(int id) {
         return  matiereRepository.findByGroupe(id);
     }*/
+
+    public void ajouterMatiereAuGroupeParId(int idMatiere, int idGroupe) {
+        Matiere matiere = matiereRepository.findById(idMatiere)
+                .orElseThrow(() -> new NotFoundException("Matiere not found with id: " + idMatiere));
+
+        Groupe groupe = groupeRepository.findById(idGroupe)
+                .orElseThrow(() -> new NotFoundException("Groupe not found with id: " + idGroupe));
+
+        if (groupe.getMatieres() == null) {
+            groupe.setMatieres(new ArrayList<>());
+        }
+
+        groupe.getMatieres().add(matiere);
+        groupeRepository.save(groupe);
+    }
+
+
+    public void ajouterMatiereAChaqueGroupeDeFiliere(String filiere, int idMatiere) {
+        List<Groupe> groupes = groupeRepository.findByFiliere(filiere);
+        Matiere matiere = matiereRepository.findById(idMatiere)
+                .orElseThrow(() -> new NotFoundException("Matiere not found with id: " + idMatiere));
+
+        for (Groupe groupe : groupes) {
+            if (groupe.getMatieres() == null) {
+                groupe.setMatieres(new ArrayList<>());
+            }
+            groupe.getMatieres().add(matiere);
+            groupeRepository.save(groupe);
+        }
+    }
 }

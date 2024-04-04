@@ -29,6 +29,8 @@ public class AdminController {
     private ActualiteesService actualiteesService;
     @Autowired
     private DemandeService demandeService;
+    @Autowired
+    private  GroupeService groupeService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -121,6 +123,11 @@ public class AdminController {
         }
     }
 
+    @PostMapping ("/assignerEnseignantAuGroupe/{idEnseignant}/{idGroupe}")
+    public void assignerEnseignantAuGroupe (@PathVariable int idEnseignant, @PathVariable int idGroupe){
+        groupeService.assignerEnseignantAuGroupe(idEnseignant,idGroupe);
+    }
+
 
     @GetMapping("/getEtudiantByInscrit/{numInscri}")
     public ResponseEntity<EtudiantDTO> getEtudiantByInscri(@PathVariable double numInscri) {
@@ -175,6 +182,15 @@ public class AdminController {
     @GetMapping("/get-Matiere/{id}")
     public Optional<Matiere> getMatiereById(int id ){
         return matiereService.getMatiereById(id);
+    }
+
+    @PostMapping ("/add-Matiere-a-un-groupe-id/{idmatiere}/{idgrp}")
+    public void  ajouterMatiereAuGroupeParId (@PathVariable int idmatiere ,@PathVariable int idgrp ){
+        matiereService.ajouterMatiereAuGroupeParId(idmatiere,idgrp);
+    }
+    @PostMapping ("/add-Matiere-a-un-groupe-filiere/{filiere}/{idMatiere}")
+    public void  ajouterMatiereAChaqueGroupeDeFiliere(@PathVariable String filiere ,@PathVariable int idMatiere ){
+        matiereService.ajouterMatiereAChaqueGroupeDeFiliere(filiere , idMatiere);
     }
 
 
