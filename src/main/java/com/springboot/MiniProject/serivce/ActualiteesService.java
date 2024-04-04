@@ -31,6 +31,11 @@ public class ActualiteesService {
         return "Actualitee added ";
     }
 
+    public List<Actualitees> getNewsByTargetAudiance(String targetAudiance) {
+        return actualiteesRepository.findByTargetAudiance(targetAudiance);
+    }
+
+
     public void deleteNews(Long id) {
         actualiteesRepository.deleteById(Math.toIntExact(id));
     }

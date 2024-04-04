@@ -18,5 +18,6 @@ public class Actualitees {
     private Long id;
     private String title;
     private String content;
+    private  String targetAudiance;
     private Date date;
 }

@@ -33,7 +33,8 @@ public class EtudiantService {
         return etudiantDTO;
     }
 
-//////// remplissage de etudmatiere ///////
+
+    //////// remplissage de etudmatiere ///////
     public void remplirEtudMatierePourTousGroupes() {
         List<Groupe> groupes = groupeRepository.findAll();
         for (Groupe groupe : groupes) {
@@ -55,6 +56,7 @@ public class EtudiantService {
         }
     }
 
+    //////// gets matiere ///////
 
     private  static MatiereDTO getMatiereDTO(Matiere matiere) {
         MatiereDTO matiereDTO = new MatiereDTO();
@@ -78,6 +80,9 @@ public class EtudiantService {
         matiereDTO.setIdGroupes(listidgrp);
         return matiereDTO;
     }
+
+    //////// gets ense ///////
+
     private EnseignantDTO getEnseignantDTO (Enseignant ens) {
         User user = userRepository.findUserByEnseignantId(ens.getId());
         EnseignantDTO ensDTO = new EnseignantDTO();
@@ -106,7 +111,9 @@ public class EtudiantService {
         }
         return matieresDTOResult;
     }
-///get grp pour etud//
+
+
+    ///get grp pour etud//
    /* public Groupe getGroupesEtudiant(int idEtudiant) {
         Etudiant etudiant = etudiantRepository.findById(idEtudiant)
                 .orElseThrow(() -> new NotFoundException("Étudiant non trouvé avec l'identifiant : " + idEtudiant));

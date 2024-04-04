@@ -4,8 +4,10 @@ import com.springboot.MiniProject.dto.DemandeDTO;
 import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.GroupeDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
+import com.springboot.MiniProject.entity.Actualitees;
 import com.springboot.MiniProject.entity.Groupe;
 import com.springboot.MiniProject.entity.Matiere;
+import com.springboot.MiniProject.serivce.ActualiteesService;
 import com.springboot.MiniProject.serivce.DemandeService;
 import com.springboot.MiniProject.serivce.EtudiantService;
 import com.springboot.MiniProject.serivce.UserService;
@@ -27,6 +29,8 @@ public class EtudiantController {
     private EtudiantService etudiantService;
     @Autowired
     private DemandeService demandeService;
+    @Autowired
+    private ActualiteesService actualiteesService;
 
     //cette PAGE est accessible par les etudiants seulement
     @GetMapping("/welcome/etud")
@@ -59,7 +63,17 @@ public class EtudiantController {
         DemandeDTO updatedDemande = demandeService.updateDemande(id, demandeDTO);
         return new ResponseEntity<>(updatedDemande, HttpStatus.OK);
     }
-/////////////////Matieres //////
+
+
+    /////////////////Actualitees //////
+    @GetMapping("/Actualitee/{target}")
+    public ResponseEntity<List<Actualitees>> getActualiteeEtudiant(@PathVariable String target ) {
+        List<Actualitees> news =actualiteesService.getNewsByTargetAudiance(target);
+        return new ResponseEntity<>(news, HttpStatus.OK);
+    }
+
+
+/////////////////Matieres ///////////
 
     @GetMapping("/Matiere/AllMatiere/{id}")
     public List<MatiereDTO> getMatieresDansGroupePourEtudiant(@PathVariable int id ) {
