@@ -58,7 +58,7 @@ public class GroupeService {
 
 
     public void ajouterMatiereAChaqueGroupeDeFiliere(String filiere, int idMatiere) {
-        List<Groupe> groupes = groupeRepository.findByFiliere(filiere);
+        List<Groupe> groupes = groupeRepository.findByFiliereNom(filiere);
         Matiere matiere = matiereRepository.findById(idMatiere)
                 .orElseThrow(() -> new NotFoundException("Matiere not found with id: " + idMatiere));
 

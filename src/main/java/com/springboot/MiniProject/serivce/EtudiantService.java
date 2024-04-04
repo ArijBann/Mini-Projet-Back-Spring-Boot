@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EtudiantService {
@@ -148,5 +149,30 @@ public class EtudiantService {
         groupeDTO.setMatieres(matieresDTO);
         // Assurez-vous de remplir les autres champs selon vos besoins
         return groupeDTO;
+    }
+
+    public List<EtudiantDTO> getEtudiantsByFiliere(String nomFiliere) {
+        List<Etudiant> etudiants = etudiantRepository.findByGroupe_Filiere_Nom(nomFiliere);
+
+        return etudiants.stream()
+                .map(this::convertToEtudiantDTO)
+                .collect(Collectors.toList());
+    }
+
+    private EtudiantDTO convertToEtudiantDTO(Etudiant etudiant) {
+        EtudiantDTO etudiantDTO = new EtudiantDTO();
+        User user = userRepository.findUserByEtudiantId(etudiant.getId());
+        etudiantDTO.setIdEtudiant(etudiant.getId());
+        etudiantDTO.setNom(user.getNom());
+        etudiantDTO.setPrenom(user.getPrenom());
+        etudiantDTO.setEmail(user.getEmail());
+        etudiantDTO.setCIN(user.getCIN());
+        etudiantDTO.setIdGroupe(etudiant.getGroupe().getId());
+        etudiantDTO.setDate_nais(user.getDate_nais());
+        etudiantDTO.setNumtel(user.getNumtel());
+        etudiantDTO.setNum_inscri(etudiant.getNumInscri());
+        etudiantDTO.setPassword(user.getPassword());
+
+        return etudiantDTO;
     }
 }

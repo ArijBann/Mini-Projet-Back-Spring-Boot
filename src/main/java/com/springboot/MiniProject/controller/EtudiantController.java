@@ -66,10 +66,10 @@ public class EtudiantController {
 
 
     /////////////////Actualitees //////
-    @GetMapping("/Actualitee/{target}")
-    public ResponseEntity<List<Actualitees>> getActualiteeEtudiant(@PathVariable String target ) {
-        List<Actualitees> news =actualiteesService.getNewsByTargetAudiance(target);
-        return new ResponseEntity<>(news, HttpStatus.OK);
+    @GetMapping("/Actualitee/{targetAudiance}")
+    public ResponseEntity<List<Actualitees>> getActualiteeEtudiant(@PathVariable String targetAudiance ) {
+        List<Actualitees> news =actualiteesService.getNewsByTargetAudiance(targetAudiance);
+        return ResponseEntity.ok(news);
     }
 
 

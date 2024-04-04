@@ -15,4 +15,5 @@ public interface EtudRepository extends JpaRepository<Etudiant,Integer> {
     Etudiant findEtudiantByNumInscri(double numInscrit);
 
     List <Etudiant> findByGroupeId(int idGroupe);
+    List<Etudiant> findByGroupe_Filiere_Nom(String nomFiliere);
 }

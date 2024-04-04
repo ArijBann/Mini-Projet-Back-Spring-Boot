@@ -5,6 +5,7 @@ package com.springboot.MiniProject.controller;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.Actualitees;
+import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
 import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
@@ -106,6 +107,16 @@ public class AdminController {
     public List<EnseignantDTO> getAllEnseignants() {
         return service.findAllEnseignant();
     }
+    @GetMapping("/allEnseignantsInDepartement/{departement}")
+    public List<EnseignantDTO> getAllEnseignantsByIdDepartement(@PathVariable long departement) {
+        return service.findByIdDepartement(departement);
+    }
+    @GetMapping("/allEtudiantByFiliere/{filiere}")
+    public List<EtudiantDTO> getEtudiantsByFiliere(@PathVariable String filiere) {
+        return etudiantService.getEtudiantsByFiliere(filiere);
+    }
+
+
 
     /*@GetMapping("/Enseignantbyemail/{email}")
     public ResponseEntity<UserEnseigantDTO> getEnseignantByEmail(@PathVariable String email) {
