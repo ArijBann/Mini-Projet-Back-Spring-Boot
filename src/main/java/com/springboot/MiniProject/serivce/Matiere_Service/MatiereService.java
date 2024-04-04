@@ -4,6 +4,7 @@ import com.springboot.MiniProject.dto.EnseignantDTO;
 import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.exception.NotFoundException;
 import com.springboot.MiniProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -85,4 +86,6 @@ public class MatiereService implements MatiereInterface{
    /* public Optional<List<Matiere>> getMatiereBygrp(int id) {
         return  matiereRepository.findByGroupe(id);
     }*/
+
+
 }

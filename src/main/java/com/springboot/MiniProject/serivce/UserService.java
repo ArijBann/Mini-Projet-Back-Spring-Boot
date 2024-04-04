@@ -1,14 +1,10 @@
 package com.springboot.MiniProject.serivce;
 
 
-import com.springboot.MiniProject.controller.EtudiantController;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.repository.*;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -89,6 +84,9 @@ private ArchiveUsersRepository archiveUsersRepository;
             return "admin added to the system";
         }
 
+    }
+    public Optional<User> getusbymail(String email ){
+       return userRepository.findByEmail(email);
     }
     public String addEtud(UserEtudiantDTO userEtudiantDTO){
         User user = userEtudiantDTO.getUser();

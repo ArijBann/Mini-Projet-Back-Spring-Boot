@@ -9,6 +9,7 @@ import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
 import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,12 @@ public class AdminController {
     private MatiereService matiereService;
     @Autowired
     private ActualiteesService actualiteesService;
+    @Autowired
+    private DemandeService demandeService;
+    @Autowired
+    private  GroupeService groupeService;
+    @Autowired
+    private  EtudiantService etudiantService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -94,6 +101,7 @@ public class AdminController {
     public UserAdminDTO updateAdmin(@RequestBody UserAdminDTO userAdminDTO){return service.updateAdmin(userAdminDTO);}
 */
 
+//////////// Enseignant ///////
     @GetMapping("/allEnseignants")
     public List<EnseignantDTO> getAllEnseignants() {
         return service.findAllEnseignant();
@@ -118,7 +126,12 @@ public class AdminController {
         }
     }
 
+    @PostMapping ("/assignerEnseignantAuGroupe/{idEnseignant}/{idGroupe}")
+    public void assignerEnseignantAuGroupe (@PathVariable int idEnseignant, @PathVariable int idGroupe){
+        groupeService.assignerEnseignantAuGroupe(idEnseignant,idGroupe);
+    }
 
+//////////// Etudiant /////////////////
     @GetMapping("/getEtudiantByInscrit/{numInscri}")
     public ResponseEntity<EtudiantDTO> getEtudiantByInscri(@PathVariable double numInscri) {
         EtudiantDTO userEtudiantDTO = service.findByNumInscri(numInscri);
@@ -128,6 +141,12 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping ("/add-etud-matiere")
+    public void remplirEtudMatierePourTousGroupes (){
+         etudiantService.remplirEtudMatierePourTousGroupes();
+    }
+
 
     @GetMapping("/allEtudiant")
     public List<EtudiantDTO> getAllEtudiants() {
@@ -173,4 +192,42 @@ public class AdminController {
     public Optional<Matiere> getMatiereById(int id ){
         return matiereService.getMatiereById(id);
     }
+
+    @PostMapping ("/add-Matiere-a-un-groupe-id/{idmatiere}/{idgrp}")
+    public void  ajouterMatiereAuGroupeParId (@PathVariable int idmatiere ,@PathVariable int idgrp ){
+        groupeService.ajouterMatiereAuGroupeParId(idmatiere,idgrp);
+    }
+    @PostMapping ("/add-Matiere-a-un-groupe-filiere/{filiere}/{idMatiere}")
+    public void  ajouterMatiereAChaqueGroupeDeFiliere(@PathVariable String filiere ,@PathVariable int idMatiere ){
+        groupeService.ajouterMatiereAChaqueGroupeDeFiliere(filiere , idMatiere);
+    }
+
+
+    /////// Demande /////////
+
+    @GetMapping("/Demande/getAllDemande")
+    public ResponseEntity<List<DemandeDTO>> getAllDemandes() {
+        List<DemandeDTO> demandes = demandeService.getAllDemandes();
+        return new ResponseEntity<>(demandes, HttpStatus.OK);
+    }
+
+    @GetMapping("/Demande/getDemandeById/{id}")
+    public ResponseEntity<DemandeDTO> getDemandeById(@PathVariable Long id) {
+        DemandeDTO demande = demandeService.getDemandeById(id);
+        return new ResponseEntity<>(demande, HttpStatus.OK);
+    }
+
+    @PutMapping("/Demande/updateDemandeStat/{id}/{stat}")
+    public ResponseEntity<DemandeDTO> updateDemandeTraiter(@PathVariable Long id, @PathVariable String stat) {
+        DemandeDTO updatedDemandeStat = demandeService.updateDemandeTraieter(id, stat);
+        return new ResponseEntity<>(updatedDemandeStat, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/Demande/DeleteDemande/{id}")
+    public ResponseEntity<Void> deleteDemande(@PathVariable Long id) {
+        demandeService.deleteDemande(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 }
