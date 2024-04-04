@@ -3,6 +3,7 @@ package com.springboot.MiniProject.serivce;
 
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.exception.NotFoundException;
 import com.springboot.MiniProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,10 +36,12 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
     @Autowired
     private MatiereRepository matiereRepository ;
 
-
+@Autowired
     private GroupeRepository groupeRepository;
 @Autowired
 private ArchiveUsersRepository archiveUsersRepository;
+@Autowired
+private DepartementRepository departementRepository;
 
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
@@ -265,9 +268,23 @@ private ArchiveUsersRepository archiveUsersRepository;
         return etudiantDTO;
     }
 
+    @Override
+    public List<EnseignantDTO> findByIdDepartement(Long idDepartement) {
+        Departement departement = departementRepository.findById(idDepartement)
+                .orElseThrow(() -> new NotFoundException("Département non trouvé avec l'ID: " + idDepartement));
 
+        List<Enseignant> enseignants = enseignantRepository.findByDepartement(departement);
+        List<EnseignantDTO> enseignantDTOs = new ArrayList<>();
+        for (Enseignant enseignant : enseignants) {
+            User user = userRepository.findUserByEnseignantId(enseignant.getId());
+            EnseignantDTO enseignantDTO = getEnsignantDTO(enseignant, user);
+            enseignantDTOs.add(enseignantDTO);
+        }
 
-    private static EnseignantDTO getEnsignantDTO(Enseignant etudiant, User user) {
+        return enseignantDTOs;
+
+    }
+    private static EnseignantDTO getEnsignantDTO (Enseignant etudiant, User user) {
         EnseignantDTO etudiantDTO = new EnseignantDTO();
         etudiantDTO.setIdEnseignant(etudiant.getId());
         etudiantDTO.setNum_prof(etudiant.getNumProf());

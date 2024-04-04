@@ -127,7 +127,7 @@ public class EtudiantService {
         // Remplir les champs de GroupeDTO à partir de l'objet Groupe
         groupeDTO.setId(groupe.getId());
         groupeDTO.setNiveau(groupe.getNiveau());
-        groupeDTO.setFiliere(groupe.getFiliere());
+        groupeDTO.setFiliere(groupe.getFiliere().getNom());
         groupeDTO.setNumeroGroupe(groupe.getNumeroGroupe());
         List<EnseignantDTO> enseignantdto = new ArrayList<>();
         for (Enseignant enseignant : groupe.getEnseignants()) {
