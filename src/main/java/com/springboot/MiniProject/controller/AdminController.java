@@ -31,6 +31,8 @@ public class AdminController {
     private DemandeService demandeService;
     @Autowired
     private  GroupeService groupeService;
+    @Autowired
+    private  EtudiantService etudiantService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -99,6 +101,7 @@ public class AdminController {
     public UserAdminDTO updateAdmin(@RequestBody UserAdminDTO userAdminDTO){return service.updateAdmin(userAdminDTO);}
 */
 
+//////////// Enseignant ///////
     @GetMapping("/allEnseignants")
     public List<EnseignantDTO> getAllEnseignants() {
         return service.findAllEnseignant();
@@ -128,7 +131,7 @@ public class AdminController {
         groupeService.assignerEnseignantAuGroupe(idEnseignant,idGroupe);
     }
 
-
+//////////// Etudiant /////////////////
     @GetMapping("/getEtudiantByInscrit/{numInscri}")
     public ResponseEntity<EtudiantDTO> getEtudiantByInscri(@PathVariable double numInscri) {
         EtudiantDTO userEtudiantDTO = service.findByNumInscri(numInscri);
@@ -138,6 +141,12 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping ("/add-etud-matiere")
+    public void remplirEtudMatierePourTousGroupes (){
+         etudiantService.remplirEtudMatierePourTousGroupes();
+    }
+
 
     @GetMapping("/allEtudiant")
     public List<EtudiantDTO> getAllEtudiants() {
@@ -186,11 +195,11 @@ public class AdminController {
 
     @PostMapping ("/add-Matiere-a-un-groupe-id/{idmatiere}/{idgrp}")
     public void  ajouterMatiereAuGroupeParId (@PathVariable int idmatiere ,@PathVariable int idgrp ){
-        matiereService.ajouterMatiereAuGroupeParId(idmatiere,idgrp);
+        groupeService.ajouterMatiereAuGroupeParId(idmatiere,idgrp);
     }
     @PostMapping ("/add-Matiere-a-un-groupe-filiere/{filiere}/{idMatiere}")
     public void  ajouterMatiereAChaqueGroupeDeFiliere(@PathVariable String filiere ,@PathVariable int idMatiere ){
-        matiereService.ajouterMatiereAChaqueGroupeDeFiliere(filiere , idMatiere);
+        groupeService.ajouterMatiereAChaqueGroupeDeFiliere(filiere , idMatiere);
     }
 
 

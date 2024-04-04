@@ -1,9 +1,10 @@
 package com.springboot.MiniProject.controller;
 
-import com.springboot.MiniProject.dto.DemandeDTO;
-import com.springboot.MiniProject.dto.EnseignantDTO;
-import com.springboot.MiniProject.dto.EtudiantDTO;
+import com.springboot.MiniProject.dto.*;
+import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.Enseignant;
+import com.springboot.MiniProject.entity.Groupe;
+import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.DemandeService;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.UserService;
@@ -54,6 +55,19 @@ public class EnseignantController {
     public ResponseEntity<DemandeDTO> updateDemande(@PathVariable Long id, @RequestBody DemandeDTO demandeDTO) {
         DemandeDTO updatedDemande = demandeService.updateDemande(id, demandeDTO);
         return new ResponseEntity<>(updatedDemande, HttpStatus.OK);
+    }
+
+////////////// Matieres ////////////////
+    @GetMapping("/Matiere/AllMatiere/{id}")
+    public List<MatiereEnsDTO> getMatieresEnseigneesParEnseignant(@PathVariable int id ) {
+        List<MatiereEnsDTO> mesMat = enseignantService.getMatieresEnseigneesParEnseignant(id);
+        return new ResponseEntity<>(mesMat, HttpStatus.OK).getBody();
+    }
+
+    @GetMapping("/Matiere/Allgroupes/{id}")
+    public List<GroupEnsDTO> getGroupesEnseignesParEnseignant(@PathVariable int id ) {
+        List<GroupEnsDTO> mesGrp = enseignantService.getGroupesEnseignesParEnseignant(id);
+        return new ResponseEntity<>(mesGrp, HttpStatus.OK).getBody();
     }
 
 

@@ -1,5 +1,6 @@
 package com.springboot.MiniProject.entity;
 
+import com.springboot.MiniProject.dto.EnseignantDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;

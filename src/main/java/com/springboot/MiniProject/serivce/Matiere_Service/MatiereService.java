@@ -87,33 +87,5 @@ public class MatiereService implements MatiereInterface{
         return  matiereRepository.findByGroupe(id);
     }*/
 
-    public void ajouterMatiereAuGroupeParId(int idMatiere, int idGroupe) {
-        Matiere matiere = matiereRepository.findById(idMatiere)
-                .orElseThrow(() -> new NotFoundException("Matiere not found with id: " + idMatiere));
 
-        Groupe groupe = groupeRepository.findById(idGroupe)
-                .orElseThrow(() -> new NotFoundException("Groupe not found with id: " + idGroupe));
-
-        if (groupe.getMatieres() == null) {
-            groupe.setMatieres(new ArrayList<>());
-        }
-
-        groupe.getMatieres().add(matiere);
-        groupeRepository.save(groupe);
-    }
-
-
-    public void ajouterMatiereAChaqueGroupeDeFiliere(String filiere, int idMatiere) {
-        List<Groupe> groupes = groupeRepository.findByFiliere(filiere);
-        Matiere matiere = matiereRepository.findById(idMatiere)
-                .orElseThrow(() -> new NotFoundException("Matiere not found with id: " + idMatiere));
-
-        for (Groupe groupe : groupes) {
-            if (groupe.getMatieres() == null) {
-                groupe.setMatieres(new ArrayList<>());
-            }
-            groupe.getMatieres().add(matiere);
-            groupeRepository.save(groupe);
-        }
-    }
 }

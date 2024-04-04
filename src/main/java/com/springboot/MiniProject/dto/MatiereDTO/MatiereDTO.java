@@ -13,8 +13,8 @@ public class MatiereDTO {
     private int id;
     private String libelleMatiere ;
     private int coefMat ;
-    private int idEtudMatieres;
-    private int idEnseignantMatieres;
-    private int idSupportsCours;
+    private List <Long> idEtudMatieres;
+    private List <Long> idEnseignantMatieres;
+    private List <Integer> idSupportsCours;
     private List <Integer> idGroupes;
 }

@@ -59,7 +59,7 @@ public class SecurityConfig {
                                         "/issatso/authentificat","/issatso/refreshToken","/issatso/admin/allArchiveUsers",
                                         "/issatso/admin/EtudiantsBynuminscrit/{numinscrit}","/issatso/admin/allEtudiant",
                                         "/issatso/admin/Actualitees/**","/issatso/admin/Matiere/**","/issatso/admin/Demande/**",
-                                        "/issatso/enseignant/Demande/**","/issatso/etudiant/Demande/**","/issatso/admin/**").permitAll()
+                                        "/issatso/enseignant/**","/issatso/etudiant/**","/issatso/admin/**").permitAll()
                                .requestMatchers("/issatso/**").authenticated()
                                 .anyRequest().authenticated()
                 )

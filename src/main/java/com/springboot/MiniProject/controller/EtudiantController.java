@@ -2,6 +2,10 @@ package com.springboot.MiniProject.controller;
 
 import com.springboot.MiniProject.dto.DemandeDTO;
 import com.springboot.MiniProject.dto.EtudiantDTO;
+import com.springboot.MiniProject.dto.GroupeDTO;
+import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
+import com.springboot.MiniProject.entity.Groupe;
+import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.DemandeService;
 import com.springboot.MiniProject.serivce.EtudiantService;
 import com.springboot.MiniProject.serivce.UserService;
@@ -54,6 +58,18 @@ public class EtudiantController {
     public ResponseEntity<DemandeDTO> updateDemande(@PathVariable Long id, @RequestBody DemandeDTO demandeDTO) {
         DemandeDTO updatedDemande = demandeService.updateDemande(id, demandeDTO);
         return new ResponseEntity<>(updatedDemande, HttpStatus.OK);
+    }
+/////////////////Matieres //////
+
+    @GetMapping("/Matiere/AllMatiere/{id}")
+    public List<MatiereDTO> getMatieresDansGroupePourEtudiant(@PathVariable int id ) {
+        List<MatiereDTO> mesMat = etudiantService.getMatieresDansGroupePourEtudiant(id);
+        return new ResponseEntity<>(mesMat, HttpStatus.OK).getBody();
+    }
+
+    @GetMapping("/Groupe/getGroupe/{id}")
+    public GroupeDTO getGroupesEtudiant(@PathVariable int id ) {
+        return etudiantService.getGroupeEtudiant(id);
     }
 
 }
