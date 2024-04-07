@@ -5,16 +5,23 @@ package com.springboot.MiniProject.controller;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.Actualitees;
+import com.springboot.MiniProject.entity.Emploi;
 import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
 import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +41,8 @@ public class AdminController {
     private  GroupeService groupeService;
     @Autowired
     private  EtudiantService etudiantService;
+    @Autowired
+    private EmploiService emploiService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -240,5 +249,52 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+//////////////Emploi de temps ////////////
 
+    @PostMapping("/AddEmploi")
+    public ResponseEntity<?> ajouterEmploi(@RequestParam String date,
+                                                @RequestParam boolean estEnseignant,
+                                                @RequestParam(required = false) int enseignantId,
+                                                @RequestParam(required = false) int groupeId,
+                                                @RequestParam int filiereId,
+                                                @RequestParam MultipartFile pdfContenu) throws IOException, ParseException {
+        String emploi = emploiService.ajouterEmploi(date, estEnseignant, enseignantId, groupeId, filiereId, pdfContenu);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(emploi);
+    }
+
+
+
+
+    @GetMapping("/emploiContenuTes/{idgroupe}")
+	public ResponseEntity<?> downloadEmploi(@PathVariable int idgroupe) throws IOException {
+		byte[] emploipdf=emploiService.downloadEmploi(idgroupe);
+		return ResponseEntity.status(HttpStatus.OK)
+				.contentType(MediaType.APPLICATION_PDF)
+				.body(emploipdf);
+
+	}
+
+
+    @GetMapping("/Emploiidfiliere/{filiereId}")
+    public ResponseEntity<List<Emploi>> trouverEmploisParFiliere(@PathVariable int filiereId) {
+        List<Emploi> emplois = emploiService.trouverEmploisParFiliere(filiereId);
+        return new ResponseEntity<>(emplois, HttpStatus.OK);
+    }
+
+    @GetMapping("/Emploifiliere/{filiereNom}")
+    public ResponseEntity<List<Emploi>> trouverEmploisParNomFiliere(@PathVariable String filiereNom) {
+        List<Emploi> emplois = emploiService.trouverEmploisParNomFiliere(filiereNom);
+        return new ResponseEntity<>(emplois, HttpStatus.OK);
+    }
+
+    @PutMapping("/EmploiUpdate/{id}")
+    public ResponseEntity<Emploi> mettreAJourEmploi(
+            @RequestParam("date") String nouvelleDate,
+            @RequestParam("contenuPDF") MultipartFile nouveauContenuPDF,
+            @PathVariable int id
+    ) throws IOException, ParseException {
+        Emploi emploi = emploiService.mettreAJourEmploi(id, nouvelleDate, nouveauContenuPDF);
+        return new ResponseEntity<>(emploi, HttpStatus.OK);
+    }
 }

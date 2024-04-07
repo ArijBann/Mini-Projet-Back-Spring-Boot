@@ -2,14 +2,8 @@ package com.springboot.MiniProject.controller;
 
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
-import com.springboot.MiniProject.entity.Actualitees;
-import com.springboot.MiniProject.entity.Enseignant;
-import com.springboot.MiniProject.entity.Groupe;
-import com.springboot.MiniProject.entity.Matiere;
-import com.springboot.MiniProject.serivce.ActualiteesService;
-import com.springboot.MiniProject.serivce.DemandeService;
-import com.springboot.MiniProject.serivce.EnseignantService;
-import com.springboot.MiniProject.serivce.UserService;
+import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.serivce.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +26,9 @@ public class EnseignantController {
     private DemandeService demandeService;
     @Autowired
     private ActualiteesService actualiteesService;
+    @Autowired
+    private EmploiService emploiService;
+
 
     //cette PAGE est accessible par les enseignants seulement
     @GetMapping("/welcome/ens")
@@ -83,6 +80,15 @@ public class EnseignantController {
         List<GroupEnsDTO> mesGrp = enseignantService.getGroupesEnseignesParEnseignant(id);
         return new ResponseEntity<>(mesGrp, HttpStatus.OK).getBody();
     }
+
+    //////////////// Emploi //////////////
+
+    @GetMapping("/Emploi/{id}")
+    public ResponseEntity<Emploi> getEmploiEnseignant(@PathVariable int id ) {
+        Emploi emploi =emploiService.trouverEmploisEnseignantParId(id);
+        return ResponseEntity.ok(emploi);
+    }
+
 
 
 }

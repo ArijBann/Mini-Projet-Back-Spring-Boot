@@ -5,12 +5,10 @@ import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.GroupeDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.Actualitees;
+import com.springboot.MiniProject.entity.Emploi;
 import com.springboot.MiniProject.entity.Groupe;
 import com.springboot.MiniProject.entity.Matiere;
-import com.springboot.MiniProject.serivce.ActualiteesService;
-import com.springboot.MiniProject.serivce.DemandeService;
-import com.springboot.MiniProject.serivce.EtudiantService;
-import com.springboot.MiniProject.serivce.UserService;
+import com.springboot.MiniProject.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +29,8 @@ public class EtudiantController {
     private DemandeService demandeService;
     @Autowired
     private ActualiteesService actualiteesService;
+    @Autowired
+    private EmploiService emploiService;
 
     //cette PAGE est accessible par les etudiants seulement
     @GetMapping("/welcome/etud")
@@ -84,6 +84,14 @@ public class EtudiantController {
     @GetMapping("/Groupe/getGroupe/{id}")
     public GroupeDTO getGroupesEtudiant(@PathVariable int id ) {
         return etudiantService.getGroupeEtudiant(id);
+    }
+
+    ///////////Emploi////////////
+
+    @GetMapping("/Emploi/{id}")
+    public ResponseEntity<Emploi> getEmploiEtudiant(@PathVariable int id ) {
+        Emploi emploi =emploiService.trouverEmploisEtudiantsParGroupeId(id);
+        return ResponseEntity.ok(emploi);
     }
 
 }
