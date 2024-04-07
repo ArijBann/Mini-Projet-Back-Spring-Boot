@@ -81,6 +81,13 @@ public class EmploiService {
         return emploi;
     }
 
+    public byte[] downloadEmploiens(int ensId) throws IOException {
+        Emploi dbEmploi = emploiRepository.findByEnseignant_Id(ensId);
+        //byte[] emploi=dbEmploi.getPdfContenu();
+        byte[] emploi=PDFCompressionUtils.decompressPDF(dbEmploi.getPdfContenu());
+        return emploi;
+    }
+
 
     public List<Emploi> trouverEmploisParFiliere(int filiereId) {
         return emploiRepository.findByFiliere_Id(filiereId);

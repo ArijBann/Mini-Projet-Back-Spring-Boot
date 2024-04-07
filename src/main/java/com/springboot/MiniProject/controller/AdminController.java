@@ -266,9 +266,9 @@ public class AdminController {
 
 
 
-    @GetMapping("/emploiContenuTes/{idgroupe}")
-	public ResponseEntity<?> downloadEmploi(@PathVariable int idgroupe) throws IOException {
-		byte[] emploipdf=emploiService.downloadEmploi(idgroupe);
+    @GetMapping("/emploiContenuTes/{ensId}")
+	public ResponseEntity<?> downloadEmploiens(@PathVariable int ensId) throws IOException {
+		byte[] emploipdf=emploiService.downloadEmploi(ensId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.contentType(MediaType.APPLICATION_PDF)
 				.body(emploipdf);
