@@ -5,16 +5,15 @@ import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.GroupeDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.Actualitees;
-import com.springboot.MiniProject.entity.Emploi;
-import com.springboot.MiniProject.entity.Groupe;
-import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -89,9 +88,11 @@ public class EtudiantController {
     ///////////Emploi////////////
 
     @GetMapping("/Emploi/{id}")
-    public ResponseEntity<Emploi> getEmploiEtudiant(@PathVariable int id ) {
-        Emploi emploi =emploiService.trouverEmploisEtudiantsParGroupeId(id);
-        return ResponseEntity.ok(emploi);
+    public ResponseEntity<?> getEmploiEtudiant(@PathVariable int id ) throws IOException {
+        byte[] emploipdf =emploiService.trouverEmploisEtudiantsParGroupeId(id);
+        return  ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(emploipdf);
     }
 
 }

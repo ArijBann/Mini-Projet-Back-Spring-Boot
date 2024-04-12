@@ -2,8 +2,11 @@ package com.springboot.MiniProject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Types;
 import java.util.Date;
 
 @Data
@@ -20,6 +23,7 @@ public class Emploi {
     private int id;
     @Lob
     @Column(name = "pdf_contenu")
+    @JdbcTypeCode(Types.VARBINARY)
     private byte[] pdfContenu;
 
     //@Transient // Ne sera pas persisté en base de données

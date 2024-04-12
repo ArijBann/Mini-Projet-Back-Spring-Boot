@@ -5,6 +5,7 @@ import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.serivce.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -83,12 +85,14 @@ public class EnseignantController {
 
     //////////////// Emploi //////////////
 
-    @GetMapping("/Emploi/{id}")
-    public ResponseEntity<Emploi> getEmploiEnseignant(@PathVariable int id ) {
-        Emploi emploi =emploiService.trouverEmploisEnseignantParId(id);
-        return ResponseEntity.ok(emploi);
-    }
+    @GetMapping("/emploiContenuTes/{ensId}")
+    public ResponseEntity<?> downloadEmploiIdEns(@PathVariable int ensId) throws IOException {
+        byte[] emploipdf=emploiService.downloadEmploiIdEns(ensId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(emploipdf);
 
+    }
 
 
 }

@@ -12,6 +12,7 @@ import com.springboot.MiniProject.serivce.*;
 import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -267,8 +269,8 @@ public class AdminController {
 
 
     @GetMapping("/emploiContenuTes/{ensId}")
-	public ResponseEntity<?> downloadEmploiens(@PathVariable int ensId) throws IOException {
-		byte[] emploipdf=emploiService.downloadEmploi(ensId);
+	public ResponseEntity<?> downloadEmploiIdEns(@PathVariable int ensId) throws IOException {
+		byte[] emploipdf=emploiService.downloadEmploiIdEns(ensId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.contentType(MediaType.APPLICATION_PDF)
 				.body(emploipdf);
@@ -276,25 +278,78 @@ public class AdminController {
 	}
 
 
-    @GetMapping("/Emploiidfiliere/{filiereId}")
-    public ResponseEntity<List<Emploi>> trouverEmploisParFiliere(@PathVariable int filiereId) {
-        List<Emploi> emplois = emploiService.trouverEmploisParFiliere(filiereId);
-        return new ResponseEntity<>(emplois, HttpStatus.OK);
+   /* @GetMapping("/Emploiidfiliere/{filiereId}")
+    public ResponseEntity<List<?>> trouverEmploisParFiliere(@PathVariable int filiereId) throws IOException {
+        List<Emploi> emploipdf = emploiService.trouverEmploisParFiliere(filiereId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(emploipdf);
+
     }
 
     @GetMapping("/Emploifiliere/{filiereNom}")
-    public ResponseEntity<List<Emploi>> trouverEmploisParNomFiliere(@PathVariable String filiereNom) {
+    public ResponseEntity<List<?>> trouverEmploisParNomFiliere(@PathVariable String filiereNom) throws IOException {
+        List<Emploi> emploipdf = emploiService.trouverEmploisParNomFiliere(filiereNom);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(emploipdf);
+    }*/
+
+    @GetMapping("/Emploiidfiliere/{filiereId}")
+    public ResponseEntity<byte[]> trouverEmploisParFiliere(@PathVariable int filiereId) throws IOException {
+        List<Emploi> emplois = emploiService.trouverEmploisParFiliere(filiereId);
+
+        // Concaténer les contenus PDF de tous les emplois
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (Emploi emploi : emplois) {
+            outputStream.write(emploi.getPdfContenu());
+        }
+
+        // Renvoyer la réponse avec le contenu PDF
+        byte[] pdfConcatene = outputStream.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "emplois.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfConcatene);
+    }
+    @GetMapping("/Emploifiliere/{filiereNom}")
+    public ResponseEntity<byte[]> trouverEmploisParNomFiliere(@PathVariable String filiereNom) throws IOException {
         List<Emploi> emplois = emploiService.trouverEmploisParNomFiliere(filiereNom);
-        return new ResponseEntity<>(emplois, HttpStatus.OK);
+
+        // Concaténer les contenus PDF de tous les emplois
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (Emploi emploi : emplois) {
+            outputStream.write(emploi.getPdfContenu());
+        }
+
+        // Renvoyer la réponse avec le contenu PDF
+        byte[] pdfConcatene = outputStream.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "emplois.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfConcatene);
     }
 
+
     @PutMapping("/EmploiUpdate/{id}")
-    public ResponseEntity<Emploi> mettreAJourEmploi(
-            @RequestParam("date") String nouvelleDate,
-            @RequestParam("contenuPDF") MultipartFile nouveauContenuPDF,
+    public ResponseEntity<?> mettreAJourEmploi(
+            @RequestParam String nouvelleDate,
+            @RequestParam MultipartFile nouveauContenuPDF,
             @PathVariable int id
     ) throws IOException, ParseException {
-        Emploi emploi = emploiService.mettreAJourEmploi(id, nouvelleDate, nouveauContenuPDF);
-        return new ResponseEntity<>(emploi, HttpStatus.OK);
+        String emploi = emploiService.mettreAJourEmploi(id, nouvelleDate, nouveauContenuPDF);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(emploi);
+    }
+
+    @DeleteMapping("/deleteEmploi/{id}")
+    public String deleteEmploi ( @PathVariable int id){
+        return emploiService.deleteEmploi(id);
     }
 }
