@@ -10,6 +10,8 @@ import com.springboot.MiniProject.entity.Etudiant;
 import com.springboot.MiniProject.entity.Matiere;
 import com.springboot.MiniProject.serivce.*;
 import com.springboot.MiniProject.serivce.Matiere_Service.MatiereService;
+import com.springboot.MiniProject.utils.PDFCompressionUtils;
+import com.springboot.MiniProject.utils.PDFUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,6 +48,8 @@ public class AdminController {
     private  EtudiantService etudiantService;
     @Autowired
     private EmploiService emploiService;
+    @Autowired
+    private SupportCoursService supportCoursService;
 
     //cette PAGE est accessible par les admins seulement
     @GetMapping("/welcome/admin")
@@ -277,6 +282,37 @@ public class AdminController {
 
 	}
 
+    @GetMapping("/emploisParIdFiliere/{idFiliere}")
+    public ResponseEntity<List<EmploiDTO>> trouverEmploisParIdFiliere(@PathVariable int idFiliere) {
+        try {
+            // Appelez la méthode pour récupérer les emplois par idFiliere
+            List<EmploiDTO> emplois = emploiService.trouverEmploisParIdFiliere(idFiliere);
+            return ResponseEntity.ok(emplois);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des emplois", e);
+        }
+    }
+    @GetMapping("/emploisParNomFiliere/{nomFiliere}")
+    public ResponseEntity<List<EmploiDTO>> trouverEmploisParNomFiliere(@PathVariable String nomFiliere) {
+        try {
+            // Appelez la méthode pour récupérer les emplois par nomFiliere
+            List<EmploiDTO> emplois = emploiService.trouverEmploisParNomFiliere(nomFiliere);
+            return ResponseEntity.ok(emplois);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des emplois", e);
+        }
+    }
+
+    @GetMapping("/emploiByLien/{idemp}/{lien}")
+    public ResponseEntity<?> downloademps(@PathVariable int idemp,@PathVariable String lien ) throws IOException {
+        byte[] supportpdf=emploiService.downloademps(lien,idemp);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(supportpdf);
+
+    }
 
    /* @GetMapping("/Emploiidfiliere/{filiereId}")
     public ResponseEntity<List<?>> trouverEmploisParFiliere(@PathVariable int filiereId) throws IOException {
@@ -295,18 +331,27 @@ public class AdminController {
                 .body(emploipdf);
     }*/
 
-    @GetMapping("/Emploiidfiliere/{filiereId}")
+  /*  @GetMapping("/Emploiidfiliere/{filiereId}")
     public ResponseEntity<byte[]> trouverEmploisParFiliere(@PathVariable int filiereId) throws IOException {
-        List<Emploi> emplois = emploiService.trouverEmploisParFiliere(filiereId);
+        List<EmploiDTO> emplois = emploiService.trouverEmploisParIdFiliere(filiereId);
 
-        // Concaténer les contenus PDF de tous les emplois
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        boolean isFirst = true;
+
         for (Emploi emploi : emplois) {
-            outputStream.write(emploi.getPdfContenu());
+            if (!isFirst) {
+                // Ajouter une page blanche entre chaque contenu PDF
+                outputStream.write(PDFUtil.createBlankPage());
+            } else {
+                isFirst = false;
+            }
+
+            byte[] pdfContenu = PDFCompressionUtils.decompressPDF(emploi.getPdfContenu());
+            outputStream.write(pdfContenu);
         }
 
-        // Renvoyer la réponse avec le contenu PDF
         byte[] pdfConcatene = outputStream.toByteArray();
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("filename", "emplois.pdf");
@@ -315,9 +360,10 @@ public class AdminController {
                 .headers(headers)
                 .body(pdfConcatene);
     }
+
     @GetMapping("/Emploifiliere/{filiereNom}")
     public ResponseEntity<byte[]> trouverEmploisParNomFiliere(@PathVariable String filiereNom) throws IOException {
-        List<Emploi> emplois = emploiService.trouverEmploisParNomFiliere(filiereNom);
+        List<EmploiDTO> emplois = emploiService.trouverEmploisParNomFiliere(filiereNom);
 
         // Concaténer les contenus PDF de tous les emplois
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -335,7 +381,7 @@ public class AdminController {
                 .headers(headers)
                 .body(pdfConcatene);
     }
-
+*/
 
     @PutMapping("/EmploiUpdate/{id}")
     public ResponseEntity<?> mettreAJourEmploi(

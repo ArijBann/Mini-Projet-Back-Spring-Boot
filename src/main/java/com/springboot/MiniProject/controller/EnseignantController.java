@@ -4,15 +4,23 @@ import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
 import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.serivce.*;
+import com.springboot.MiniProject.utils.PDFUtil;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,7 +39,8 @@ public class EnseignantController {
     @Autowired
     private EmploiService emploiService;
 
-
+    @Autowired
+    private SupportCoursService supportCoursService;
     //cette PAGE est accessible par les enseignants seulement
     @GetMapping("/welcome/ens")
     @PreAuthorize("hasAuthority('ROLE_ENS')")
@@ -91,6 +100,154 @@ public class EnseignantController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(emploipdf);
+
+    }
+
+////////// support de cours  /////////////
+    @PostMapping("/ajouter")
+    public ResponseEntity<String> ajouterSupportCours(@RequestParam String libelleSupport,
+                                                      @RequestParam int idMatiere,
+                                                      @RequestParam MultipartFile fichier) throws IOException {
+        String message = supportCoursService.ajouterSupportCours(libelleSupport, idMatiere, fichier);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
+    }
+
+
+  /*  @GetMapping("/par-matiere/{idMatiere}")
+    public ResponseEntity<List<SupportCours>> consulterSupportsCoursParMatiere(@PathVariable int idMatiere) throws IOException {
+        List<SupportCours> supportsCours = supportCoursService.consulterSupportsCoursParMatiere(idMatiere);
+        return ResponseEntity.ok(supportsCours);
+    }
+*/
+
+   /* @GetMapping("/supportsCoursParMatiere/{matiereId}")
+    public ResponseEntity<byte[]> consulterSupportsCoursParMatiere(@PathVariable int matiereId) throws IOException {
+        List<SupportCours> supportsCours = supportCoursService.consulterSupportsCoursParMatiere(matiereId);
+
+        ByteArrayOutputStream
+                outputStream = new ByteArrayOutputStream();
+        boolean isFirst = true;
+
+        for (SupportCours supportCours : supportsCours) {
+            if (!isFirst) {
+                // Ajouter une page blanche entre chaque contenu PDF
+                outputStream.write(PDFUtil.createBlankPage());
+            } else {
+                isFirst = false;
+            }
+
+            byte[] pdfContenu = supportCours.getFichier();
+            outputStream.write(pdfContenu);
+        }
+
+        byte[] pdfConcatene = outputStream.toByteArray();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "supports_cours.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfConcatene);
+    }
+*/
+  /* @GetMapping("/supportsCoursParMatiere/{matiereId}")
+   public ResponseEntity<byte[]> consulterSupportsCoursParMatiere(@PathVariable int matiereId) throws IOException {
+       List<SupportCours> supportsCours = supportCoursService.consulterSupportsCoursParMatiere(matiereId);
+
+       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+       boolean isFirst = true;
+
+       for (SupportCours supportCours : supportsCours) {
+           if (!isFirst) {
+               // Add a blank page between each PDF content
+               outputStream.write(PDFUtil.createBlankPage());
+           } else {
+               isFirst = false;
+           }
+
+           byte[] pdfContenu = supportCours.getFichier(); // Assuming this method returns the PDF content as byte[]
+           outputStream.write(pdfContenu);
+           outputStream.write(PDFUtil.createBlankPage()); // Add another blank page after each PDF content
+       }
+
+       byte[] pdfConcatene = outputStream.toByteArray();
+
+       HttpHeaders headers = new HttpHeaders();
+       headers.setContentType(MediaType.APPLICATION_PDF);
+       headers.setContentDispositionFormData("filename", "supports_cours.pdf");
+
+       return ResponseEntity.ok()
+               .headers(headers)
+               .body(pdfConcatene);
+   }*/
+
+   /* @GetMapping("/supportsCoursParMatiere/{matiereId}")
+    public ResponseEntity<?> consulterSupportsCoursParMatiere(@PathVariable int matiereId) throws IOException {
+        List<byte[]> supportsCours = supportCoursService.consulterSupportsCoursParMatiere(matiereId);
+        System.out.println("support cours size %d " + supportsCours.size());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        for (int i = 0; i < supportsCours.size(); i++) {
+            if (i != 0) {
+                // Add a blank page between each PDF content
+                outputStream.write(PDFUtil.createBlankPage());
+            }
+            outputStream.write(supportsCours.get(i));
+            System.out.println("outputStream size %d " +outputStream.size());
+        }
+
+        byte[] pdfConcatene = outputStream.toByteArray();
+        System.out.println("pdfConcatene length %d " +pdfConcatene.length);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfConcatene);
+    }*/
+
+    @GetMapping("/supportsCoursParMatiere2/{idMatiere}")
+    public ResponseEntity<List<SupportCoursDTO>> consulterSupportsCoursParMatiere2(@PathVariable int idMatiere) {
+        try {
+            // Appelez la méthode pour récupérer les supports de cours par matière
+            List<SupportCoursDTO> supportsCours = supportCoursService.consulterSupportsCoursParMatiere2(idMatiere);
+            return ResponseEntity.ok(supportsCours);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des supports de cours", e);
+        }
+    }
+
+    @GetMapping("/supportsCours/parGroupe/{idGroupe}")
+    public ResponseEntity<List<SupportCoursDTO>> consulterSupportsCoursParGroupe(@PathVariable int idGroupe) throws IOException {
+
+        try {
+            // Appelez la méthode pour récupérer les supports de cours par matière
+            List<SupportCoursDTO> supportsCours = supportCoursService.trouverSupportsCoursParGroupe(idGroupe);
+            return ResponseEntity.ok(supportsCours);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des supports de cours", e);
+        }
+
+    }
+
+    @GetMapping("/supportsCours/parFiliereEtNiveau")
+    public ResponseEntity<List<SupportCoursDTO>> consulterSupportsCoursParFiliereEtNiveau(@RequestParam int idFiliere, @RequestParam String niveau) throws IOException {
+        try {
+            // Appelez la méthode pour récupérer les supports de cours par matière
+            List<SupportCoursDTO> supportsCours = supportCoursService.trouverSupportsCoursParFiliereEtNiveau(idFiliere, niveau);
+            return ResponseEntity.ok(supportsCours);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des supports de cours", e);
+        }
+    }
+
+    @GetMapping("/supportsCoursParMatiere2Sup/{idSup}/{lien}")
+    public ResponseEntity<?> downloadunsup(@PathVariable int idSup,@PathVariable String lien ) throws IOException {
+        byte[] supportpdf=supportCoursService.downloadunsup(lien,idSup);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(supportpdf);
 
     }
 

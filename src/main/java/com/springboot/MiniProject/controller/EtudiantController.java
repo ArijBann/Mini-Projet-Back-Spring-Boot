@@ -4,7 +4,9 @@ import com.springboot.MiniProject.dto.DemandeDTO;
 import com.springboot.MiniProject.dto.EtudiantDTO;
 import com.springboot.MiniProject.dto.GroupeDTO;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
+import com.springboot.MiniProject.dto.SupportCoursDTO;
 import com.springboot.MiniProject.entity.Actualitees;
+import com.springboot.MiniProject.entity.SupportCours;
 import com.springboot.MiniProject.serivce.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +33,9 @@ public class EtudiantController {
     private ActualiteesService actualiteesService;
     @Autowired
     private EmploiService emploiService;
+
+    @Autowired
+    private SupportCoursService supportCoursService;
 
     //cette PAGE est accessible par les etudiants seulement
     @GetMapping("/welcome/etud")
@@ -95,4 +101,38 @@ public class EtudiantController {
                 .body(emploipdf);
     }
 
+    ////////////////// support de cours ///////////////
+    @GetMapping("/supportsCours/parGroupe/{idGroupe}")
+    public ResponseEntity<List<SupportCoursDTO>> consulterSupportsCoursParGroupe(@PathVariable int idGroupe) throws IOException {
+
+        try {
+            // Appelez la méthode pour récupérer les supports de cours par matière
+            List<SupportCoursDTO> supportsCours = supportCoursService.trouverSupportsCoursParGroupe(idGroupe);
+            return ResponseEntity.ok(supportsCours);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des supports de cours", e);
+        }
+
+    }
+
+    @GetMapping("/supportsCoursParMatiere2/{idMatiere}")
+    public ResponseEntity<List<SupportCoursDTO>> consulterSupportsCoursParMatiere2(@PathVariable int idMatiere) {
+        try {
+            // Appelez la méthode pour récupérer les supports de cours par matière
+            List<SupportCoursDTO> supportsCours = supportCoursService.consulterSupportsCoursParMatiere2(idMatiere);
+            return ResponseEntity.ok(supportsCours);
+        } catch (IOException e) {
+            // Gérez l'exception en renvoyant une réponse HTTP appropriée
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erreur lors de la récupération des supports de cours", e);
+        }
+    }
+    @GetMapping("/supportsCoursParMatiere2Sup/{idSup}/{lien}")
+    public ResponseEntity<?> downloadunsup(@PathVariable int idSup,@PathVariable String lien ) throws IOException {
+        byte[] supportpdf=supportCoursService.downloadunsup(lien,idSup);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(supportpdf);
+
+    }
 }

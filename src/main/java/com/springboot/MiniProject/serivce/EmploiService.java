@@ -1,9 +1,8 @@
 package com.springboot.MiniProject.serivce;
 
-import com.springboot.MiniProject.entity.Emploi;
-import com.springboot.MiniProject.entity.Enseignant;
-import com.springboot.MiniProject.entity.Filiere;
-import com.springboot.MiniProject.entity.Groupe;
+import com.springboot.MiniProject.dto.EmploiDTO;
+import com.springboot.MiniProject.dto.SupportCoursDTO;
+import com.springboot.MiniProject.entity.*;
 import com.springboot.MiniProject.utils.PDFCompressionUtils;
 import com.springboot.MiniProject.exception.NotFoundException;
 import com.springboot.MiniProject.repository.EmploiRepository;
@@ -23,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class EmploiService {
+public class EmploiService implements EmploiInterface{
 
     @Autowired
     private EmploiRepository emploiRepository;
@@ -153,7 +152,105 @@ public class EmploiService {
         Emploi dbEmploi = emploiRepository.findByEnseignant_Id(ensId);
         return PDFCompressionUtils.decompressPDF(dbEmploi.getPdfContenu());
     }
-    public List<Emploi> trouverEmploisParFiliere(int filiereId) throws IOException {
+
+    public byte[] downloademps(String lien, int idemp) throws IOException {
+        EmploiDTO supDto = getEmploiByLien(lien ,idemp);
+        Emploi emp= emploiRepository.findById(idemp)
+                .orElseThrow(() -> new NotFoundException("Emploi non trouvé avec l'ID : " + idemp));
+        if (supDto != null)
+        {  return PDFCompressionUtils.decompressPDF(emp.getPdfContenu());
+        }else  return null;
+    }
+    @Override
+    public EmploiDTO getEmploiByLien(String lien, int idemp) {
+        Emploi emp =emploiRepository.findById(idemp)
+                .orElseThrow(() -> new NotFoundException("Emploi non trouvé avec l'ID : " + idemp));
+
+        if (emp != null)
+        {  EmploiDTO emploiDTODTODTO = convertToEmploiDTO(emp,lien);
+            return emploiDTODTODTO;
+        }else return null;
+
+    }
+
+    public List<EmploiDTO> trouverEmploisParNomFiliere(String nomFiliere) throws IOException {
+        Filiere filiere = filiereRepository.findByNom(nomFiliere);
+        if (filiere == null) {
+            throw new NotFoundException("Filière non trouvée avec le nom : " + nomFiliere);
+        }
+
+        List<Emploi> emplois = emploiRepository.findByFiliere_Nom(nomFiliere);
+        return convertToEmploiDTOList(emplois);
+    }
+
+    public List<EmploiDTO> trouverEmploisParIdFiliere(int idFiliere) throws IOException {
+        Filiere filiere = filiereRepository.findById(idFiliere)
+                .orElseThrow(() -> new NotFoundException("Filière non trouvée avec l'ID : " + idFiliere));
+
+        List<Emploi> emplois = emploiRepository.findByFiliere_Id(idFiliere);
+        return convertToEmploiDTOList(emplois);
+    }
+    public static List<EmploiDTO> convertToEmploiDTOList(List<Emploi> emplois) {
+        List<EmploiDTO> emploiDTOs = new ArrayList<>();
+        for (Emploi emploi : emplois) {
+            EmploiDTO emploiDTO = new EmploiDTO();
+            emploiDTO.setId(emploi.getId());
+            emploiDTO.setDate(emploi.getDate());
+            emploiDTO.setLienPDF(genererLienPDF(emploi.getId())); // Générer le lien PDF
+            if (emploi.getEnseignant() != null) {
+                emploiDTO.setIdEnseignant(emploi.getEnseignant().getId());
+            } else {
+                emploiDTO.setIdEnseignant(0);
+            }
+            if (emploi.getGroupe()!= null ) {
+                emploiDTO.setIdGroupe(emploi.getGroupe().getId());
+            }else {
+                emploiDTO.setIdGroupe(0);
+            }
+            if (emploi.getFiliere() != null ) {
+                emploiDTO.setIdFiliere(emploi.getFiliere().getId()); // Assurez-vous que getFiliere() retourne la filière associée à l'emploi
+            }else {
+                emploiDTO.setIdFiliere(0);
+            }
+            // Assurez-vous que getGroupe() retourne le groupe associé à l'emploi
+            emploiDTOs.add(emploiDTO);
+        }
+        return emploiDTOs;
+    }
+    public static EmploiDTO convertToEmploiDTO(Emploi emploi, String lien ) {
+            EmploiDTO emploiDTO = new EmploiDTO();
+            emploiDTO.setId(emploi.getId());
+            emploiDTO.setDate(emploi.getDate());
+            emploiDTO.setEstEnseignant(emploi.isEstEnseignant());
+            emploiDTO.setLienPDF(lien);
+        if (emploi.getEnseignant() != null) {
+            emploiDTO.setIdEnseignant(emploi.getEnseignant().getId());
+        } else {
+            emploiDTO.setIdEnseignant(0);
+        }
+        if (emploi.getGroupe()!= null ) {
+            emploiDTO.setIdGroupe(emploi.getGroupe().getId());
+        }else {
+            emploiDTO.setIdGroupe(0);
+        }
+        if (emploi.getFiliere() != null ) {
+            emploiDTO.setIdFiliere(emploi.getFiliere().getId()); // Assurez-vous que getFiliere() retourne la filière associée à l'emploi
+        }else {
+            emploiDTO.setIdFiliere(0);
+        }
+
+        return emploiDTO;
+    }
+
+    private static String genererLienPDF(int emploiId) {
+        // Supposons que vos fichiers PDF sont stockés dans un répertoire nommé "pdf" à la racine de votre application
+        String cheminVersPDF = "/pdf/";
+        // Vous pouvez personnaliser le nom du fichier PDF en utilisant l'ID de l'emploi
+        String nomFichierPDF = "emploi_" + emploiId + ".pdf";
+        // Combiner le chemin vers le répertoire PDF avec le nom du fichier
+        return cheminVersPDF + nomFichierPDF;
+    }
+    /*public List<Emploi> trouverEmploisParFiliere(int filiereId) throws IOException {
         List<Emploi> emplois = emploiRepository.findByFiliere_Id(filiereId);
         List<Emploi> emploisDecompresses = new ArrayList<>();
 
@@ -178,7 +275,7 @@ public class EmploiService {
         }
 
         return emploisDecompresses;
-    }
+    }*/
    /* public List<Emploi> trouverEmploisParNomFiliere(String nomFiliere) {
         return emploiRepository.findByFiliere_Nom(nomFiliere);
     }
@@ -205,5 +302,7 @@ public class EmploiService {
         }
         return null;
     }
+
+
 }
 
