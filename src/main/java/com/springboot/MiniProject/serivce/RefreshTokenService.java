@@ -38,4 +38,10 @@ public class RefreshTokenService {
         return token;
     }
 
+    public void deleteRefreshToken (int userId ){
+        refreshTokenRepository.deleteByUserId(userId);
+    }
+    public Optional<RefreshToken> getLoggedInUser(String refreshToken){
+        return refreshTokenRepository.findByToken(refreshToken);
+    }
 }
