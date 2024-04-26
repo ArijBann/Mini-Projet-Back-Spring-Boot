@@ -7,6 +7,7 @@ import com.springboot.MiniProject.entity.Actualitees;
 import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.*;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +35,10 @@ public class AdminController {
     private ActualiteesService actualiteesService;
 
     //cette PAGE est accessible par les admins seulement
+    @GetMapping("/test")
+    public String test(){
+        return "helooooo 5edmet l lieasin " ;
+    }
     @GetMapping("/welcome/admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String welcomeAdmin() {
