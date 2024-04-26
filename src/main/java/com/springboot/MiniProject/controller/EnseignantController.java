@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,10 @@ public class EnseignantController {
     private ActualiteesService actualiteesService;
     @Autowired
     private EmploiService emploiService;
-
+    @Autowired
+    private CompteRenduService compteRenduService;
+    @Autowired
+    private TravailEtudiantService travailEtudiantService;
     @Autowired
     private SupportCoursService supportCoursService;
     //cette PAGE est accessible par les enseignants seulement
@@ -250,6 +254,81 @@ public class EnseignantController {
                 .body(supportpdf);
 
     }
+///////////////// Compte Rendu ///////////////////////
 
+    @PostMapping("/compteRendu/add")
+    public ResponseEntity<String> ajouterCompteRendu(@RequestParam int enseignantId,
+                                                     @RequestParam String titre,
+                                                     @RequestParam String description,
+                                                     @RequestParam MultipartFile fichier,
+                                                     @RequestParam String deadline,
+                                                     @RequestParam int matiereId,
+                                                     @RequestParam int groupeId) throws ParseException, IOException {
+        compteRenduService.addCompteRendu(enseignantId, titre, description, fichier, deadline, matiereId,groupeId);
+        return ResponseEntity.ok("Compte rendu créé avec succès !");
+    }
+
+    @DeleteMapping("/compteRendu/delete/{compteRenduId}")
+    public ResponseEntity<String> supprimerCompteRendu(@PathVariable int compteRenduId) {
+        compteRenduService.deleteCompteRendu(compteRenduId);
+        return ResponseEntity.ok("Compte rendu supprimé avec succès !");
+    }
+
+    @PutMapping("/compteRendu/update/{compteRenduId}")
+    public ResponseEntity<String> modifierCompteRendu(@PathVariable int compteRenduId,
+                                                      @RequestBody CompteRendu updatedCompteRendu) {
+        compteRenduService.updateCompteRendu(compteRenduId, updatedCompteRendu);
+        return ResponseEntity.ok("Compte rendu modifié avec succès !");
+    }
+
+    @GetMapping("/compteRendu/getByEnsId")
+    public ResponseEntity<List<CompteRenduDTO>> getComptesRendusByEnseignant(@RequestParam int enseignantId) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getComptesRendusByEnseignant(enseignantId);
+        return ResponseEntity.ok(comptesRendus);
+    }
+
+
+
+    @GetMapping("/compteRendu/getByMatiereEnsId")
+    public ResponseEntity<List<CompteRenduDTO>> getComptesRendusByMatiereIdEns(@RequestParam int matiereId,@RequestParam int enseignantId) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getComptesRendusByMatiereIdEns(matiereId,enseignantId);
+        return ResponseEntity.ok(comptesRendus);
+    }
+    @GetMapping("/compteRendu/getByMatiereEtudiant")
+    public ResponseEntity<List<CompteRenduDTO>> getComptesRendusByMatiere(@RequestParam int matiereId) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getComptesRendusByMatiere(matiereId);
+        return ResponseEntity.ok(comptesRendus);
+    }
+
+
+    @GetMapping("/compteRenduByFiliereNiveauGroupeMatiere/getByEnsId")
+    public ResponseEntity<List<CompteRenduDTO>> getCompteRenduByFiliereNiveauGroupeMatiere(@RequestParam int enseignantId ,@RequestParam int idMatiere,@RequestParam int idGroupe) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getCompteRenduByFiliereNiveauGroupeMatiere(enseignantId ,idMatiere,idGroupe);
+        return ResponseEntity.ok(comptesRendus);
+    }
+
+
+   @GetMapping("/compteRenduByLien/{idcr}/{lien}")
+    public ResponseEntity<?> getCompteRenduByLien(@PathVariable int idcr,@PathVariable String lien ) throws IOException {
+        byte[] compteRendupdf=compteRenduService.getCompteRenduByLien(lien,idcr);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(compteRendupdf);
+
+    }
+
+    @GetMapping("/travailEtudiant/getByCompteRendu")
+    public ResponseEntity<List<TravailEtudiantDTO>> getTravauxEtudiantByCompteRendu(@RequestParam int compteRenduId) {
+        List<TravailEtudiantDTO> travauxEtudiant = travailEtudiantService.getTravauxEtudiantByCompteRendu(compteRenduId);
+        return ResponseEntity.ok(travauxEtudiant);
+    }
+    @GetMapping("/travailEtudiantByLien/{idcr}/{lien}")
+    public ResponseEntity<?> getTravailEtudiantByLien(@PathVariable int idcr,@PathVariable String lien ) throws IOException {
+        byte[] travailEtudiantpdf=travailEtudiantService.getTravailEtudiantByLien(lien,idcr);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(travailEtudiantpdf);
+
+    }
 
 }

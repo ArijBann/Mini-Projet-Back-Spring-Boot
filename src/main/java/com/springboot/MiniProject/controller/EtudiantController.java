@@ -1,10 +1,7 @@
 package com.springboot.MiniProject.controller;
 
-import com.springboot.MiniProject.dto.DemandeDTO;
-import com.springboot.MiniProject.dto.EtudiantDTO;
-import com.springboot.MiniProject.dto.GroupeDTO;
+import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
-import com.springboot.MiniProject.dto.SupportCoursDTO;
 import com.springboot.MiniProject.entity.Actualitees;
 import com.springboot.MiniProject.entity.SupportCours;
 import com.springboot.MiniProject.serivce.*;
@@ -14,9 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -33,6 +32,10 @@ public class EtudiantController {
     private ActualiteesService actualiteesService;
     @Autowired
     private EmploiService emploiService;
+    @Autowired
+    private CompteRenduService compteRenduService;
+    @Autowired
+    private TravailEtudiantService travailEtudiantService;
 
     @Autowired
     private SupportCoursService supportCoursService;
@@ -135,4 +138,55 @@ public class EtudiantController {
                 .body(supportpdf);
 
     }
+
+///////////////// Compte Rendu ///////////////////////
+
+
+    @GetMapping("/compteRendu/getByMatiereEtudiant")
+    public ResponseEntity<List<CompteRenduDTO>> getComptesRendusByMatiere(@RequestParam int matiereId) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getComptesRendusByMatiere(matiereId);
+        return ResponseEntity.ok(comptesRendus);
+    }
+
+    @GetMapping("/compteRendu/getByMatiereEnseignantId")
+    public ResponseEntity<List<CompteRenduDTO>> getComptesRendusByMatiereetEns(@RequestParam int matiereId , @RequestParam int enseignantId) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getComptesRendusByMatiereIdEns(matiereId, enseignantId);
+        return ResponseEntity.ok(comptesRendus);
+    }
+    @GetMapping("/compteRenduByLien/{idcr}/{lien}")
+    public ResponseEntity<?> getCompteRenduByLien(@PathVariable int idcr,@PathVariable String lien ) throws IOException {
+        byte[] compteRendupdf=compteRenduService.getCompteRenduByLien(lien,idcr);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(compteRendupdf);
+
+    }
+    @GetMapping("/compteRenduByFiliereNiveauGroupeMatiere/getByEnsId")
+    public ResponseEntity<List<CompteRenduDTO>> getCompteRenduByFiliereNiveauGroupeMatiere(@RequestParam int enseignantId ,@RequestParam int idMatiere,@RequestParam int idGroupe) {
+        List<CompteRenduDTO> comptesRendus = compteRenduService.getCompteRenduByFiliereNiveauGroupeMatiere(enseignantId ,idMatiere,idGroupe);
+        return ResponseEntity.ok(comptesRendus);
+    }
+    @GetMapping("/travailEtudiant/getByCompteRendu")
+    public ResponseEntity<List<TravailEtudiantDTO>> getTravauxEtudiantByCompteRendu(@RequestParam int compteRenduId) {
+        List<TravailEtudiantDTO> travauxEtudiant = travailEtudiantService.getTravauxEtudiantByCompteRendu(compteRenduId);
+        return ResponseEntity.ok(travauxEtudiant);
+    }
+    @GetMapping("/travailEtudiantByLien/{idcr}/{lien}")
+    public ResponseEntity<?> getTravailEtudiantByLien(@PathVariable int idcr,@PathVariable String lien ) throws IOException {
+        byte[] travailEtudiantpdf=travailEtudiantService.getTravailEtudiantByLien(lien,idcr);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(travailEtudiantpdf);
+
+    }
+    @PostMapping("/travailEtudiant/add")
+    public ResponseEntity<String> ajoutertravailEtudiant(@RequestParam int idCompteRendu,
+                                                     @RequestParam MultipartFile fichier,
+                                                         @RequestParam String message,
+                                                         @RequestParam int etudiantId) throws ParseException, IOException {
+        travailEtudiantService.addTravailEtudiant(idCompteRendu, fichier, message, etudiantId);
+        return ResponseEntity.ok("travailEtudiant  créé avec succès !");
+    }
+
+
 }
