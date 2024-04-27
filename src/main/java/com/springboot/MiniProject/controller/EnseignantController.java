@@ -2,9 +2,11 @@ package com.springboot.MiniProject.controller;
 
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.dto.MatiereDTO.MatiereDTO;
+import com.springboot.MiniProject.entity.Actualitees;
 import com.springboot.MiniProject.entity.Enseignant;
 import com.springboot.MiniProject.entity.Groupe;
 import com.springboot.MiniProject.entity.Matiere;
+import com.springboot.MiniProject.serivce.ActualiteesService;
 import com.springboot.MiniProject.serivce.DemandeService;
 import com.springboot.MiniProject.serivce.EnseignantService;
 import com.springboot.MiniProject.serivce.UserService;
@@ -28,6 +30,8 @@ public class EnseignantController {
     private EnseignantService enseignantService;
     @Autowired
     private DemandeService demandeService;
+    @Autowired
+    private ActualiteesService actualiteesService;
 
     //cette PAGE est accessible par les enseignants seulement
     @GetMapping("/welcome/ens")
@@ -57,7 +61,17 @@ public class EnseignantController {
         return new ResponseEntity<>(updatedDemande, HttpStatus.OK);
     }
 
-////////////// Matieres ////////////////
+
+
+    ///////////Actualitees //////////////
+    @GetMapping("/Actualitee/{targetAudiance}")
+    public ResponseEntity<List<Actualitees>> getActualiteeEnseignant(@PathVariable String targetAudiance ) {
+        List<Actualitees> news =actualiteesService.getNewsByTargetAudiance(targetAudiance);
+        return ResponseEntity.ok(news);
+    }
+
+
+    ////////////// Matieres ////////////////
     @GetMapping("/Matiere/AllMatiere/{id}")
     public List<MatiereEnsDTO> getMatieresEnseigneesParEnseignant(@PathVariable int id ) {
         List<MatiereEnsDTO> mesMat = enseignantService.getMatieresEnseigneesParEnseignant(id);

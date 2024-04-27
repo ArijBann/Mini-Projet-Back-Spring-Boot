@@ -8,5 +8,6 @@ import java.util.List;
 public interface EnseignantInterface {
     List<EnseignantDTO>  findAllEnseignant();
     EnseignantDTO findByNumProf(int numProf);
+    List<EnseignantDTO> findByIdDepartement(Long idDep);
     EnseignantDTO updateEnseignant(EnseignantDTO enseignantDTO);
 }

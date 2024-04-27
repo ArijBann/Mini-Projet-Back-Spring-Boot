@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EtudiantService {
@@ -33,7 +34,8 @@ public class EtudiantService {
         return etudiantDTO;
     }
 
-//////// remplissage de etudmatiere ///////
+
+    //////// remplissage de etudmatiere ///////
     public void remplirEtudMatierePourTousGroupes() {
         List<Groupe> groupes = groupeRepository.findAll();
         for (Groupe groupe : groupes) {
@@ -55,6 +57,7 @@ public class EtudiantService {
         }
     }
 
+    //////// gets matiere ///////
 
     private  static MatiereDTO getMatiereDTO(Matiere matiere) {
         MatiereDTO matiereDTO = new MatiereDTO();
@@ -78,6 +81,9 @@ public class EtudiantService {
         matiereDTO.setIdGroupes(listidgrp);
         return matiereDTO;
     }
+
+    //////// gets ense ///////
+
     private EnseignantDTO getEnseignantDTO (Enseignant ens) {
         User user = userRepository.findUserByEnseignantId(ens.getId());
         EnseignantDTO ensDTO = new EnseignantDTO();
@@ -106,7 +112,9 @@ public class EtudiantService {
         }
         return matieresDTOResult;
     }
-///get grp pour etud//
+
+
+    ///get grp pour etud//
    /* public Groupe getGroupesEtudiant(int idEtudiant) {
         Etudiant etudiant = etudiantRepository.findById(idEtudiant)
                 .orElseThrow(() -> new NotFoundException("Étudiant non trouvé avec l'identifiant : " + idEtudiant));
@@ -127,7 +135,7 @@ public class EtudiantService {
         // Remplir les champs de GroupeDTO à partir de l'objet Groupe
         groupeDTO.setId(groupe.getId());
         groupeDTO.setNiveau(groupe.getNiveau());
-        groupeDTO.setFiliere(groupe.getFiliere());
+        groupeDTO.setFiliere(groupe.getFiliere().getNom());
         groupeDTO.setNumeroGroupe(groupe.getNumeroGroupe());
         List<EnseignantDTO> enseignantdto = new ArrayList<>();
         for (Enseignant enseignant : groupe.getEnseignants()) {
@@ -141,5 +149,30 @@ public class EtudiantService {
         groupeDTO.setMatieres(matieresDTO);
         // Assurez-vous de remplir les autres champs selon vos besoins
         return groupeDTO;
+    }
+
+    public List<EtudiantDTO> getEtudiantsByFiliere(String nomFiliere) {
+        List<Etudiant> etudiants = etudiantRepository.findByGroupe_Filiere_Nom(nomFiliere);
+
+        return etudiants.stream()
+                .map(this::convertToEtudiantDTO)
+                .collect(Collectors.toList());
+    }
+
+    private EtudiantDTO convertToEtudiantDTO(Etudiant etudiant) {
+        EtudiantDTO etudiantDTO = new EtudiantDTO();
+        User user = userRepository.findUserByEtudiantId(etudiant.getId());
+        etudiantDTO.setIdEtudiant(etudiant.getId());
+        etudiantDTO.setNom(user.getNom());
+        etudiantDTO.setPrenom(user.getPrenom());
+        etudiantDTO.setEmail(user.getEmail());
+        etudiantDTO.setCIN(user.getCIN());
+        etudiantDTO.setIdGroupe(etudiant.getGroupe().getId());
+        etudiantDTO.setDate_nais(user.getDate_nais());
+        etudiantDTO.setNumtel(user.getNumtel());
+        etudiantDTO.setNum_inscri(etudiant.getNumInscri());
+        etudiantDTO.setPassword(user.getPassword());
+
+        return etudiantDTO;
     }
 }

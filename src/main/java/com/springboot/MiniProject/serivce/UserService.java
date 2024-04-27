@@ -3,6 +3,7 @@ package com.springboot.MiniProject.serivce;
 
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.exception.NotFoundException;
 import com.springboot.MiniProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,10 +36,12 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
     @Autowired
     private MatiereRepository matiereRepository ;
 
-
+@Autowired
     private GroupeRepository groupeRepository;
 @Autowired
 private ArchiveUsersRepository archiveUsersRepository;
+@Autowired
+private DepartementRepository departementRepository;
 
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
@@ -265,22 +268,63 @@ private ArchiveUsersRepository archiveUsersRepository;
         return etudiantDTO;
     }
 
+    @Override
+    public List<EnseignantDTO> findByIdDepartement(Long idDepartement) {
+        Departement departement = departementRepository.findById(idDepartement)
+                .orElseThrow(() -> new NotFoundException("Département non trouvé avec l'ID: " + idDepartement));
 
+        List<Enseignant> enseignants = enseignantRepository.findByDepartement(departement);
+        List<EnseignantDTO> enseignantDTOs = new ArrayList<>();
+        for (Enseignant enseignant : enseignants) {
+            User user = userRepository.findUserByEnseignantId(enseignant.getId());
+            EnseignantDTO enseignantDTO = getEnsignantDTO(enseignant, user);
+            enseignantDTOs.add(enseignantDTO);
+        }
 
-    private static EnseignantDTO getEnsignantDTO(Enseignant etudiant, User user) {
-        EnseignantDTO etudiantDTO = new EnseignantDTO();
-        etudiantDTO.setIdEnseignant(etudiant.getId());
-        etudiantDTO.setNum_prof(etudiant.getNumProf());
-        etudiantDTO.setDiplome(etudiant.getDiplome());
-        etudiantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
-        etudiantDTO.setCIN(user.getCIN());
-        etudiantDTO.setNom(user.getNom());
-        etudiantDTO.setPrenom(user.getPrenom());
-        etudiantDTO.setEmail(user.getEmail());
-        etudiantDTO.setNumtel(user.getNumtel());
-        etudiantDTO.setDate_nais(user.getDate_nais());
-        etudiantDTO.setPassword(user.getPassword());
-        return etudiantDTO;
+        return enseignantDTOs;
+
+    }
+    private static EnseignantDTO getEnsignantDTO (Enseignant etudiant, User user) {
+        EnseignantDTO enseignantDTO = new EnseignantDTO();
+        double cinnul =0;
+        double telnul=0;
+        enseignantDTO.setIdEnseignant(etudiant.getId());
+        enseignantDTO.setNum_prof(etudiant.getNumProf());
+        enseignantDTO.setDiplome(etudiant.getDiplome());
+        enseignantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
+
+        if (user != null) {
+        enseignantDTO.setCIN(user.getCIN());
+        enseignantDTO.setNom(user.getNom());
+        enseignantDTO.setPrenom(user.getPrenom());
+        enseignantDTO.setEmail(user.getEmail());
+        enseignantDTO.setNumtel(user.getNumtel());
+        enseignantDTO.setDate_nais(user.getDate_nais());
+        enseignantDTO.setPassword(user.getPassword());
+    } else {
+        // Traitez le cas où l'objet user est null
+        // Vous pouvez définir des valeurs par défaut ou effectuer d'autres actions appropriées
+        // Par exemple :
+
+        enseignantDTO.setCIN(cinnul);
+        enseignantDTO.setNom("");
+        enseignantDTO.setPrenom("");
+        enseignantDTO.setEmail("");
+        enseignantDTO.setNumtel(telnul);
+        enseignantDTO.setDate_nais(null);
+        enseignantDTO.setPassword("");
+    }
+      /*
+
+        enseignantDTO.setCIN(user.getCIN());
+        enseignantDTO.setNom(user.getNom());
+        enseignantDTO.setPrenom(user.getPrenom());
+        enseignantDTO.setEmail(user.getEmail());
+        enseignantDTO.setNumtel(user.getNumtel());
+        enseignantDTO.setDate_nais(user.getDate_nais());
+        enseignantDTO.setPassword(user.getPassword());
+        */
+        return enseignantDTO;
     }
 
 

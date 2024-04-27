@@ -20,8 +20,6 @@ public class Groupe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String niveau;
-    @Column(name = "filière")
-    private String filiere;
     private int numeroGroupe ;
     @ManyToMany(mappedBy = "groupes")
     private List <Enseignant> enseignants ;
@@ -29,5 +27,9 @@ public class Groupe {
     private List<Etudiant> etudiantList;*/
    @ManyToMany(mappedBy = "groupes")
    private List<Matiere> matieres;
+
+    @ManyToOne
+    @JoinColumn(name = "filiere_id")
+    private Filiere filiere;
 
 }

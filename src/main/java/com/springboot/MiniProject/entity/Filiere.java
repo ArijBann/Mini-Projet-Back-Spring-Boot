@@ -4,20 +4,19 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
-
-@Getter
-@Setter
-@Data
 @Entity
-@Table(name = "Actualitees")
-public class Actualitees {
+@Table(name = "filiere")
+@Getter @Setter @Data
+public class Filiere {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String content;
-    private  String targetAudiance;
-    private Date date;
+
+    private String nom;
+
+    @ManyToOne
+    @JoinColumn(name = "departement_id")
+    private Departement departement;
+
 }
+

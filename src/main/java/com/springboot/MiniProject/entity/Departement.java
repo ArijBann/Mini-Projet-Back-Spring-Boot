@@ -5,19 +5,21 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.util.List;
 
+@Entity
+@Table(name = "departement")
 @Getter
 @Setter
 @Data
-@Entity
-@Table(name = "Actualitees")
-public class Actualitees {
+public class Departement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String content;
-    private  String targetAudiance;
-    private Date date;
+
+    private String nom;
+
+    @OneToMany(mappedBy = "departement")
+    private List<Filiere> filieres;
 }
+

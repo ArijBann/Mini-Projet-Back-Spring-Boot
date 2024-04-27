@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class EnseignantDTO {
     private int idEnseignant;
+    private  Long idDepartement;
     private int num_prof;
     private String diplome;
     private List<Integer> idGroupes ;

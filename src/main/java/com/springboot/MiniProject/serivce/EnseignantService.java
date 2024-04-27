@@ -107,7 +107,7 @@ public class EnseignantService {
         // Remplir les champs de GroupeDTO à partir de l'objet Groupe
         groupensDTO.setId(groupe.getId());
         groupensDTO.setNiveau(groupe.getNiveau());
-        groupensDTO.setFiliere(groupe.getFiliere());
+        groupensDTO.setFiliere(groupe.getFiliere().getNom());
         groupensDTO.setNumeroGroupe(groupe.getNumeroGroupe());
         List<MatiereEnsDTO> matieresEnsDTO = new ArrayList<>();
         for (Matiere matiere : groupe.getMatieres()) {
