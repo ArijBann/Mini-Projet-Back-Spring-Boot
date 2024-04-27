@@ -9,6 +9,7 @@ import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.JwtService;
 import com.springboot.MiniProject.serivce.UserService;
 import com.springboot.MiniProject.serivce.RefreshTokenService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,7 +74,13 @@ public class UserController {
         return "Welcome ens";
     }
 
-
+    @Transactional
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout (@RequestHeader("Authorization") String refreshToken){
+        int userId = refreshTokenService.getLoggedInUser(refreshToken).get().getUser().getId();
+        refreshTokenService.deleteRefreshToken(userId);
+        return ResponseEntity.ok().build();
+    }
     @PostMapping("/authentificat")
     public JwtResponse authentificateAndGetToken(@RequestBody AuthRequest authRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
