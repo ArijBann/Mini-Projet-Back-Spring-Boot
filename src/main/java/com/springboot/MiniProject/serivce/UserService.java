@@ -41,24 +41,24 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
     @Autowired
     private MatiereRepository matiereRepository ;
 
-@Autowired
+    @Autowired
     private GroupeRepository groupeRepository;
-@Autowired
-private ArchiveUsersRepository archiveUsersRepository;
-@Autowired
-private DepartementRepository departementRepository;
-   // private UserMapper userMapper;
+    @Autowired
+    private ArchiveUsersRepository archiveUsersRepository;
+    @Autowired
+    private DepartementRepository departementRepository;
+    // private UserMapper userMapper;
 
- /*   public UserInfoDetails login(AuthRequest credentialsDto) {
-        User user = userRepository.findByEmail(credentialsDto.getEmail())
-                .orElseThrow(() -> new NotFoundException("user non trouvé avec l'ID : " + credentialsDto.getEmail()));
+    /*   public UserInfoDetails login(AuthRequest credentialsDto) {
+           User user = userRepository.findByEmail(credentialsDto.getEmail())
+                   .orElseThrow(() -> new NotFoundException("user non trouvé avec l'ID : " + credentialsDto.getEmail()));
 
-        if (passwordEncoder.matches(CharBuffer.wrap(credentialsDto.getPassword()), user.getPassword())) {
-            return userMapper.toUserDto(user);
-        }
-        throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
-    }
-*/
+           if (passwordEncoder.matches(CharBuffer.wrap(credentialsDto.getPassword()), user.getPassword())) {
+               return userMapper.toUserDto(user);
+           }
+           throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+       }
+   */
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();
@@ -105,7 +105,7 @@ private DepartementRepository departementRepository;
 
     }
     public Optional<User> getusbymail(String email ){
-       return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email);
     }
     public String addEtud(UserEtudiantDTO userEtudiantDTO){
         User user = userEtudiantDTO.getUser();
@@ -310,26 +310,26 @@ private DepartementRepository departementRepository;
         enseignantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
 
         if (user != null) {
-        enseignantDTO.setCIN(user.getCIN());
-        enseignantDTO.setNom(user.getNom());
-        enseignantDTO.setPrenom(user.getPrenom());
-        enseignantDTO.setEmail(user.getEmail());
-        enseignantDTO.setNumtel(user.getNumtel());
-        enseignantDTO.setDate_nais(user.getDate_nais());
-        enseignantDTO.setPassword(user.getPassword());
-    } else {
-        // Traitez le cas où l'objet user est null
-        // Vous pouvez définir des valeurs par défaut ou effectuer d'autres actions appropriées
-        // Par exemple :
+            enseignantDTO.setCIN(user.getCIN());
+            enseignantDTO.setNom(user.getNom());
+            enseignantDTO.setPrenom(user.getPrenom());
+            enseignantDTO.setEmail(user.getEmail());
+            enseignantDTO.setNumtel(user.getNumtel());
+            enseignantDTO.setDate_nais(user.getDate_nais());
+            enseignantDTO.setPassword(user.getPassword());
+        } else {
+            // Traitez le cas où l'objet user est null
+            // Vous pouvez définir des valeurs par défaut ou effectuer d'autres actions appropriées
+            // Par exemple :
 
-        enseignantDTO.setCIN(cinnul);
-        enseignantDTO.setNom("");
-        enseignantDTO.setPrenom("");
-        enseignantDTO.setEmail("");
-        enseignantDTO.setNumtel(telnul);
-        enseignantDTO.setDate_nais(null);
-        enseignantDTO.setPassword("");
-    }
+            enseignantDTO.setCIN(cinnul);
+            enseignantDTO.setNom("");
+            enseignantDTO.setPrenom("");
+            enseignantDTO.setEmail("");
+            enseignantDTO.setNumtel(telnul);
+            enseignantDTO.setDate_nais(null);
+            enseignantDTO.setPassword("");
+        }
       /*
 
         enseignantDTO.setCIN(user.getCIN());
