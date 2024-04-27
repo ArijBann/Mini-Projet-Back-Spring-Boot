@@ -1,14 +1,19 @@
 package com.springboot.MiniProject.serivce;
 
 
+import com.springboot.MiniProject.config.UserInfoDetails;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.exception.AppException;
 import com.springboot.MiniProject.exception.NotFoundException;
+import com.springboot.MiniProject.mappers.UserMapper;
 import com.springboot.MiniProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.CharBuffer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +47,18 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
 private ArchiveUsersRepository archiveUsersRepository;
 @Autowired
 private DepartementRepository departementRepository;
+   // private UserMapper userMapper;
 
+ /*   public UserInfoDetails login(AuthRequest credentialsDto) {
+        User user = userRepository.findByEmail(credentialsDto.getEmail())
+                .orElseThrow(() -> new NotFoundException("user non trouvé avec l'ID : " + credentialsDto.getEmail()));
+
+        if (passwordEncoder.matches(CharBuffer.wrap(credentialsDto.getPassword()), user.getPassword())) {
+            return userMapper.toUserDto(user);
+        }
+        throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+    }
+*/
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();

@@ -9,11 +9,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserInfoDetails implements UserDetails {
 
 
     private String name;
     private String password;
+    private String token;
     private List<GrantedAuthority> authorities;
 /******************************************************************************************/
    /* public UserInfoDetails(UserInfo userInfo) {

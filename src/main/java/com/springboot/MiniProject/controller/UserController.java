@@ -1,5 +1,7 @@
 package com.springboot.MiniProject.controller;
 
+import com.springboot.MiniProject.config.UserInfoDetails;
+import com.springboot.MiniProject.config.UserInfoDetailsService;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.RefreshToken;
 import com.springboot.MiniProject.entity.Enseignant;
@@ -8,10 +10,12 @@ import com.springboot.MiniProject.serivce.JwtService;
 import com.springboot.MiniProject.serivce.UserService;
 import com.springboot.MiniProject.serivce.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +25,14 @@ public class UserController {
     @Autowired
     private UserService service;
     @Autowired
+    private UserInfoDetailsService userInfoDetailsService;
+    @Autowired
     private JwtService jwtService;
     @Autowired
     private RefreshTokenService refreshTokenService;
     @Autowired
     private AuthenticationManager authenticationManager;
+
 
     //cette PAGE est accessible par tout le monde
     @GetMapping("/welcome")
