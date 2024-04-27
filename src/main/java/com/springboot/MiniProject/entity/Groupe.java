@@ -1,5 +1,6 @@
 package com.springboot.MiniProject.entity;
 
+import com.springboot.MiniProject.dto.EnseignantDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -19,7 +20,6 @@ public class Groupe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String niveau;
-    private String filière;
     private int numeroGroupe ;
     @ManyToMany(mappedBy = "groupes")
     private List <Enseignant> enseignants ;
@@ -27,5 +27,9 @@ public class Groupe {
     private List<Etudiant> etudiantList;*/
    @ManyToMany(mappedBy = "groupes")
    private List<Matiere> matieres;
+
+    @ManyToOne
+    @JoinColumn(name = "filiere_id")
+    private Filiere filiere;
 
 }

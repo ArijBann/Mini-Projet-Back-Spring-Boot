@@ -31,5 +31,11 @@ public class Enseignant {
 
     @OneToMany(mappedBy = "enseignant")
     private List<EnseignantMatiere> enseignantMatieres;
+
+    @ManyToOne
+    @JoinColumn(name = "departement_id")
+    private Departement departement;
+
+
 }
 

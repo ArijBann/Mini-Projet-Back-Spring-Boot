@@ -10,6 +10,7 @@ public interface EtudiantInterface {
     EtudiantDTO findByNumInscri(double numInscri);
 
     List <EtudiantDTO> findByIdGroupe(int idGroupe);
+    // <EtudiantDTO> findByFiliere(int idGroupe);
     List <EtudiantDTO> findAllEtudiant();
     EtudiantDTO updateEtudiant(EtudiantDTO etudiantDTO);
 }

@@ -1,25 +1,23 @@
 package com.springboot.MiniProject.serivce;
 
 
-import com.springboot.MiniProject.Request.ChangePasswordRequest;
-import com.springboot.MiniProject.controller.EtudiantController;
+import com.springboot.MiniProject.config.UserInfoDetails;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
+import com.springboot.MiniProject.exception.AppException;
+import com.springboot.MiniProject.exception.NotFoundException;
+import com.springboot.MiniProject.mappers.UserMapper;
 import com.springboot.MiniProject.repository.*;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import java.nio.CharBuffer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -43,11 +41,24 @@ public class UserService implements  EtudiantInterface ,EnseignantInterface{
     @Autowired
     private MatiereRepository matiereRepository ;
 
-
+@Autowired
     private GroupeRepository groupeRepository;
 @Autowired
 private ArchiveUsersRepository archiveUsersRepository;
+@Autowired
+private DepartementRepository departementRepository;
+   // private UserMapper userMapper;
 
+ /*   public UserInfoDetails login(AuthRequest credentialsDto) {
+        User user = userRepository.findByEmail(credentialsDto.getEmail())
+                .orElseThrow(() -> new NotFoundException("user non trouvé avec l'ID : " + credentialsDto.getEmail()));
+
+        if (passwordEncoder.matches(CharBuffer.wrap(credentialsDto.getPassword()), user.getPassword())) {
+            return userMapper.toUserDto(user);
+        }
+        throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+    }
+*/
     public String addEns(UserEnseigantDTO userEnseigantDTO){
         User user = userEnseigantDTO.getUser();
         Enseignant enseignant=userEnseigantDTO.getEnseignant();
@@ -92,6 +103,9 @@ private ArchiveUsersRepository archiveUsersRepository;
             return "admin added to the system";
         }
 
+    }
+    public Optional<User> getusbymail(String email ){
+       return userRepository.findByEmail(email);
     }
     public String addEtud(UserEtudiantDTO userEtudiantDTO){
         User user = userEtudiantDTO.getUser();
@@ -270,22 +284,63 @@ private ArchiveUsersRepository archiveUsersRepository;
         return etudiantDTO;
     }
 
+    @Override
+    public List<EnseignantDTO> findByIdDepartement(Long idDepartement) {
+        Departement departement = departementRepository.findById(idDepartement)
+                .orElseThrow(() -> new NotFoundException("Département non trouvé avec l'ID: " + idDepartement));
 
+        List<Enseignant> enseignants = enseignantRepository.findByDepartement(departement);
+        List<EnseignantDTO> enseignantDTOs = new ArrayList<>();
+        for (Enseignant enseignant : enseignants) {
+            User user = userRepository.findUserByEnseignantId(enseignant.getId());
+            EnseignantDTO enseignantDTO = getEnsignantDTO(enseignant, user);
+            enseignantDTOs.add(enseignantDTO);
+        }
 
-    private static EnseignantDTO getEnsignantDTO(Enseignant etudiant, User user) {
-        EnseignantDTO etudiantDTO = new EnseignantDTO();
-        etudiantDTO.setIdEnseignant(etudiant.getId());
-        etudiantDTO.setNum_prof(etudiant.getNumProf());
-        etudiantDTO.setDiplome(etudiant.getDiplome());
-        etudiantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
-        etudiantDTO.setCIN(user.getCIN());
-        etudiantDTO.setNom(user.getNom());
-        etudiantDTO.setPrenom(user.getPrenom());
-        etudiantDTO.setEmail(user.getEmail());
-        etudiantDTO.setNumtel(user.getNumtel());
-        etudiantDTO.setDate_nais(user.getDate_nais());
-        etudiantDTO.setPassword(user.getPassword());
-        return etudiantDTO;
+        return enseignantDTOs;
+
+    }
+    private static EnseignantDTO getEnsignantDTO (Enseignant etudiant, User user) {
+        EnseignantDTO enseignantDTO = new EnseignantDTO();
+        double cinnul =0;
+        double telnul=0;
+        enseignantDTO.setIdEnseignant(etudiant.getId());
+        enseignantDTO.setNum_prof(etudiant.getNumProf());
+        enseignantDTO.setDiplome(etudiant.getDiplome());
+        enseignantDTO.setIdGroupes(etudiant.getGroupes().stream().map(Groupe::getId).collect(Collectors.toList()));
+
+        if (user != null) {
+        enseignantDTO.setCIN(user.getCIN());
+        enseignantDTO.setNom(user.getNom());
+        enseignantDTO.setPrenom(user.getPrenom());
+        enseignantDTO.setEmail(user.getEmail());
+        enseignantDTO.setNumtel(user.getNumtel());
+        enseignantDTO.setDate_nais(user.getDate_nais());
+        enseignantDTO.setPassword(user.getPassword());
+    } else {
+        // Traitez le cas où l'objet user est null
+        // Vous pouvez définir des valeurs par défaut ou effectuer d'autres actions appropriées
+        // Par exemple :
+
+        enseignantDTO.setCIN(cinnul);
+        enseignantDTO.setNom("");
+        enseignantDTO.setPrenom("");
+        enseignantDTO.setEmail("");
+        enseignantDTO.setNumtel(telnul);
+        enseignantDTO.setDate_nais(null);
+        enseignantDTO.setPassword("");
+    }
+      /*
+
+        enseignantDTO.setCIN(user.getCIN());
+        enseignantDTO.setNom(user.getNom());
+        enseignantDTO.setPrenom(user.getPrenom());
+        enseignantDTO.setEmail(user.getEmail());
+        enseignantDTO.setNumtel(user.getNumtel());
+        enseignantDTO.setDate_nais(user.getDate_nais());
+        enseignantDTO.setPassword(user.getPassword());
+        */
+        return enseignantDTO;
     }
 
 
@@ -325,6 +380,7 @@ private ArchiveUsersRepository archiveUsersRepository;
         EtudiantDTO enseignantDTOExists = getEtudiantDTO(etudiantExist, userExist);
         return enseignantDTOExists;
     }
+
 
 
 
