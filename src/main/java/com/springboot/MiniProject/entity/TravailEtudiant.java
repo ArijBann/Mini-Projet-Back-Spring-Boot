@@ -6,25 +6,27 @@ import org.hibernate.annotations.JdbcTypeCode;
 
 import java.sql.Types;
 
+@Entity
+@Table(name = "travail_etudiant")
 @Getter
 @Setter
 @Data
-@Entity
-@Table(name = "Support_Cours")
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class SupportCours {
+public class TravailEtudiant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String libelleSupport;
+
     @Lob
     @Column(name = "fichier_pdf")
     @JdbcTypeCode(Types.VARBINARY)
     private byte[] fichier;
-    @ManyToOne
-    @JoinColumn(name = "id_matiere")
-    private Matiere matiere;
+    private String message;
 
+    @ManyToOne
+    @JoinColumn(name = "etudiant_id")
+    private Etudiant etudiant;
+
+    @ManyToOne
+    @JoinColumn(name = "compte_rendu_id")
+    private CompteRendu compteRendu;
 }

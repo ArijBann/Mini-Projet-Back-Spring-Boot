@@ -14,6 +14,8 @@ import java.util.Optional;
 public class UserInfoDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository repository;
+
+
     @Override
 
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -22,5 +24,6 @@ public class UserInfoDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("user not found " + email));
 
     }
+
 
 }

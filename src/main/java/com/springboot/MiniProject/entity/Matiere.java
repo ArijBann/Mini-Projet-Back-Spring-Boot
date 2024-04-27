@@ -29,4 +29,6 @@ public class Matiere {
             joinColumns = @JoinColumn(name = "matiere_id"),
             inverseJoinColumns = @JoinColumn(name = "groupe_id"))
     private List<Groupe> groupes;
+    @OneToMany(mappedBy = "matiere")
+    private List<CompteRendu> comptesRendus;
 }
