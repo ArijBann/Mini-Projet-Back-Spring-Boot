@@ -1,4 +1,6 @@
 package com.springboot.MiniProject.controller;
+
+import com.springboot.MiniProject.Request.ChangePasswordRequest;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.RefreshToken;
 import com.springboot.MiniProject.entity.Enseignant;
@@ -6,7 +8,6 @@ import com.springboot.MiniProject.entity.User;
 import com.springboot.MiniProject.serivce.JwtService;
 import com.springboot.MiniProject.serivce.UserService;
 import com.springboot.MiniProject.serivce.RefreshTokenService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -99,12 +100,6 @@ public class UserController {
                         "Refresh token is not in database!"));
     }
 
-    @Transactional
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout (@RequestHeader("Authorization") String refreshToken){
-        int userId = refreshTokenService.getLoggedInUser(refreshToken).get().getUser().getId();
-        refreshTokenService.deleteRefreshToken(userId);
-        return ResponseEntity.ok().build();
-    }
 
 }
+

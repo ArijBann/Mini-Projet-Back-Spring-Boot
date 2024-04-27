@@ -1,6 +1,7 @@
 package com.springboot.MiniProject.serivce;
 
 
+import com.springboot.MiniProject.Request.ChangePasswordRequest;
 import com.springboot.MiniProject.controller.EtudiantController;
 import com.springboot.MiniProject.dto.*;
 import com.springboot.MiniProject.entity.*;
@@ -9,8 +10,10 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -322,7 +325,6 @@ private ArchiveUsersRepository archiveUsersRepository;
         EtudiantDTO enseignantDTOExists = getEtudiantDTO(etudiantExist, userExist);
         return enseignantDTOExists;
     }
-
 
 
 
